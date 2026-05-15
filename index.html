@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Tinnitus Finder v2.1">
+<meta name="apple-mobile-web-app-title" content="Tinnitus Finder v2.2">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#eef1fb">
 <!-- Prevent iOS Safari zoom on input focus (inputs < 16px trigger zoom) -->
@@ -17,7 +17,7 @@
   #freq-manual { font-size: 32px !important; touch-action: manipulation; }
   input[type="range"] { touch-action: pan-x; -webkit-appearance: none; }
 </style>
-<title>Tinnitus Finder v2.1</title>
+<title>Tinnitus Finder v2.2</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
@@ -417,7 +417,7 @@ footer { font-size: 12px; font-weight: 500; color: #8890b8; text-align: center; 
 <body>
 
 <header>
-  <div class="logo">Tinnitus <span>Finder</span> <span style="font-size:11px;font-weight:600;color:#8890b8;letter-spacing:.05em">v2.1</span></div>
+  <div class="logo">Tinnitus <span>Finder</span> <span style="font-size:11px;font-weight:600;color:#8890b8;letter-spacing:.05em">v2.2</span></div>
   <button id="settings-btn" onclick="toggleSettings()">⚙</button>
 </header>
 
@@ -471,41 +471,7 @@ footer { font-size: 12px; font-weight: 500; color: #8890b8; text-align: center; 
     <span id="manual-mod-label"></span><div id="manual-mod-desc"></div>
   </div>
 
-  <!-- ── Find it / Pin it ── -->
-  <div class="card" style="padding:0;overflow:hidden">
-    <div id="phase1-bar" style="padding:14px 18px;cursor:pointer;border-bottom:2px solid #c8cee8;background:#e8ecff;border-left:4px solid #3a5ce8;opacity:1">
-      <div style="display:flex;align-items:center;gap:12px">
-        <div id="phase1-radio" style="width:22px;height:22px;border-radius:50%;flex-shrink:0;border:3px solid #3a5ce8;background:#3a5ce8;display:flex;align-items:center;justify-content:center">
-          <div style="width:8px;height:8px;border-radius:50%;background:#fff"></div>
-        </div>
-        <div style="flex:1">
-          <div style="font-size:13px;font-weight:800;color:#1a2060">1 · Find it — Hear Tone</div>
-          <div style="font-size:11px;color:#4a5080;margin-top:1px">Scan until the tone blends with your tinnitus</div>
-        </div>
-        <div id="phase1-check" style="font-size:16px;color:#0a7a55;display:none">✓</div>
-      </div>
-      <div id="phase1-detail" style="margin-top:10px;font-size:12px;color:#3a4080;line-height:1.7;padding-left:34px">
-        Run the auto-scan below. Listen for when the tone sounds <em>similar</em> to your tinnitus — it may blend in, echo it, or create a pulsing beat. Pause and save it.
-      </div>
-    </div>
-    <div id="phase2-bar" style="padding:14px 18px;cursor:pointer;background:#f8fafb;opacity:0.4;border-left:4px solid transparent">
-      <div style="display:flex;align-items:center;gap:12px">
-        <div id="phase2-radio" style="width:22px;height:22px;border-radius:50%;flex-shrink:0;border:3px solid #c8cee8;background:#fff;display:flex;align-items:center;justify-content:center">
-          <div style="width:8px;height:8px;border-radius:50%;background:transparent"></div>
-        </div>
-        <div style="flex:1">
-          <div style="font-size:13px;font-weight:800;color:#2a4060">2 · Pin it — Find Silence</div>
-          <div style="font-size:11px;color:#6a8090;margin-top:1px">Fine-tune until the tone feels least noticeable</div>
-        </div>
-        <div id="phase2-check" style="font-size:16px;color:#0a7a55;display:none">✓</div>
-      </div>
-      <div id="phase2-detail" style="display:none;margin-top:10px;font-size:12px;color:#2a5040;line-height:1.7;padding-left:34px">
-        Fine-tune around your saved frequency at low volume. At the exact match the tone will feel like it <em>dissolves into</em> your tinnitus.
-      </div>
-    </div>
-  </div>
-
-  <!-- ── Step 1: Auto Scan ── -->
+  <!-- ══ STEP 1: AUTO SCAN ══ -->
   <div class="scan-card">
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">
       <div style="width:24px;height:24px;border-radius:50%;background:#3a5ce8;color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0">1</div>
@@ -596,14 +562,7 @@ footer { font-size: 12px; font-weight: 500; color: #8890b8; text-align: center; 
 
     <div id="scan-pause-wrap" style="display:none;flex-direction:column;gap:8px">
       <button class="scan-pause-btn" id="scan-pause-btn">☀ That's it! — Pause here</button>
-
-      <!-- Exit always available during scan or pause -->
-      <button id="scan-stop-exit-btn" style="width:100%;padding:10px;font-size:13px;font-weight:700;
-        background:#fff3f0;border:2px solid #ffb8a8;border-radius:var(--rsm);
-        color:#cc3300;cursor:pointer;font-family:'DM Sans',sans-serif;text-align:center">
-        ■ Stop &amp; Exit
-      </button>
-
+      <button id="scan-stop-exit-btn" style="width:100%;padding:10px;font-size:13px;font-weight:700;background:#fff3f0;border:2px solid #ffb8a8;border-radius:var(--rsm);color:#cc3300;cursor:pointer;font-family:'DM Sans',sans-serif;text-align:center">■ Stop &amp; Exit</button>
       <div id="scan-step-wrap" style="display:none;flex-direction:column;gap:10px">
         <div>
           <div class="c-label" style="text-align:center;margin-bottom:8px">Compare modalities at <span id="paused-freq-label">this frequency</span></div>
@@ -627,13 +586,13 @@ footer { font-size: 12px; font-weight: 500; color: #8890b8; text-align: center; 
     </div>
   </div>
 
-  <!-- ── Step 2: Manual Input ── -->
+  <!-- ══ STEP 2: MANUAL INPUT ══ -->
   <div class="card">
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
       <div style="width:24px;height:24px;border-radius:50%;background:#3a5ce8;color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0">2</div>
       <div class="c-label" style="margin-bottom:0">Manual Input</div>
+      <span style="font-size:11px;font-weight:600;color:#a8b8d8;margin-left:4px">— override auto-scan frequency</span>
     </div>
-
     <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
       <select id="saved-freq-select"
         style="flex:1;padding:10px 12px;border-radius:10px;border:2px solid #c8cee8;
@@ -647,8 +606,7 @@ footer { font-size: 12px; font-weight: 500; color: #8890b8; text-align: center; 
         <span id="play-lbl-visible">♪ Hear Tone</span>
       </button>
     </div>
-
-    <div style="display:flex;align-items:center;justify-content:space-between;
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;
       background:#f4f6fd;border-radius:12px;padding:12px 16px;border:2px solid #e0e4f0">
       <div>
         <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#8890b8;margin-bottom:3px">Frequency</div>
@@ -660,24 +618,58 @@ footer { font-size: 12px; font-weight: 500; color: #8890b8; text-align: center; 
             title="Tap to type a frequency (100–14000 Hz)">
           <span style="font-size:13px;font-weight:700;color:#8890b8">Hz</span>
         </div>
-        <div style="font-size:10px;font-weight:600;color:#a8b8e8;margin-top:4px">✎ tap to enter manually</div>
+        <div style="font-size:10px;font-weight:600;color:#a8b8e8;margin-top:4px">✎ tap to enter or override</div>
       </div>
-      <div>
-        <div id="freq-badge" style="font-size:11px;font-weight:700;padding:5px 10px;border-radius:20px;background:rgba(58,92,232,.1);color:#3a5ce8;border:2px solid rgba(58,92,232,.2)">High freq</div>
+      <!-- Save + badge on one line -->
+      <div style="display:flex;flex-direction:row;align-items:center;gap:6px">
+        <button onclick="doSave()" style="font-size:12px;font-weight:700;padding:7px 10px;
+          border-radius:10px;border:2px solid #0a7a55;background:#e6fff4;color:#0a7a55;
+          cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap;touch-action:manipulation">
+          ✓ Save
+        </button>
+        <div id="freq-badge" style="font-size:11px;font-weight:700;padding:7px 10px;border-radius:10px;
+          background:rgba(58,92,232,.1);color:#3a5ce8;border:2px solid rgba(58,92,232,.2);
+          white-space:nowrap;text-align:center">High freq</div>
       </div>
     </div>
-
-    <!-- Stop button — visible only while playing -->
+    <div id="save-msg" style="font-size:12px;font-weight:600;color:#085c40;text-align:center;min-height:16px;font-family:'DM Mono',monospace;margin-top:4px"></div>
     <button id="manual-stop-btn"
       style="display:none;width:100%;padding:14px;font-size:15px;font-weight:700;
         background:#fff3f0;border:2px solid #ffb8a8;border-radius:var(--r);
-        color:#cc3300;cursor:pointer;font-family:'DM Sans',sans-serif;">
+        color:#cc3300;cursor:pointer;font-family:'DM Sans',sans-serif;text-align:center;margin-top:4px">
       ■ Stop
     </button>
   </div>
 
-  <button class="save-btn" onclick="doSave()">✓ Save this frequency</button>
-  <div id="save-msg"></div>
+  <!-- ══ STEP 3: FIND SILENCE ══ -->
+  <div class="card" style="padding:0;overflow:hidden;border:2px solid #b8e8d8">
+    <div id="mode-silence-btn"
+      style="padding:14px 18px;background:#e6fff4;cursor:pointer;
+        display:flex;align-items:center;gap:12px"
+      onclick="setMode(mode==='cancel' ? 'raw' : 'cancel')">
+      <div style="width:24px;height:24px;border-radius:50%;background:#0a7a55;color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0">3</div>
+      <div style="flex:1">
+        <div style="font-size:13px;font-weight:800;color:#0a4030">◎ Find Silence</div>
+        <div style="font-size:11px;color:#2a7060;margin-top:2px">Tap to toggle · phase cancellation mode</div>
+      </div>
+      <span id="silence-radio" style="width:22px;height:22px;border-radius:50%;border:3px solid #c8d8c8;background:#fff;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0">
+        <span style="width:8px;height:8px;border-radius:50%;background:transparent;display:block"></span>
+      </span>
+    </div>
+    <div id="mode-silence-desc" style="display:none;padding:14px 18px;background:#f4fffb;border-top:1px solid #c8e8d8">
+      <div style="font-size:12px;font-weight:700;color:#0a4030;margin-bottom:6px">180° phase cancellation active</div>
+      <div style="font-size:12px;font-weight:500;color:#2a5040;line-height:1.7">
+        The tone plays at <strong>low volume, 180° out of phase</strong> — the opposite waveform to your tinnitus. Fine-tune the frequency in Manual Input until the tone feels <em>least noticeable</em> or dissolves. That's your exact match.
+      </div>
+    </div>
+  </div>
+
+  <!-- Hidden elements for JS compat -->
+  <div style="display:none">
+    <button id="mode-hear-btn"></button>
+    <span id="hear-radio"><span></span></span>
+    <div id="mode-hear-desc"></div>
+  </div>
 
 </div>
 
@@ -1447,14 +1439,17 @@ function playManualTone(freq) {
   gainNode = ctx.createGain();
   gainNode.gain.value = calcGain();
   osc.connect(gainNode);
-  // StereoPanner at 0 = perfect centre, equal L+R on all browsers including iOS
+  // Phase inversion for Find Silence mode (180° out of phase)
   var panner = ctx.createStereoPanner ? ctx.createStereoPanner() : null;
-  if (panner) {
-    panner.pan.value = 0;
-    gainNode.connect(panner);
-    panner.connect(ctx.destination);
+  if (mode === 'cancel') {
+    var inv = ctx.createGain();
+    inv.gain.value = -1;
+    gainNode.connect(inv);
+    if (panner) { panner.pan.value = 0; inv.connect(panner); panner.connect(ctx.destination); }
+    else { inv.connect(ctx.destination); }
   } else {
-    gainNode.connect(ctx.destination);
+    if (panner) { panner.pan.value = 0; gainNode.connect(panner); panner.connect(ctx.destination); }
+    else { gainNode.connect(ctx.destination); }
   }
   osc.start();
   ctx.resume();
@@ -1520,64 +1515,42 @@ function setMode(m) {
   mode = m;
   var isC = (m === 'cancel');
 
-  // btn-c / btn-r still exist as hidden elements — keep in sync for JS consistency
+  // Keep hidden btn-c/btn-r in sync
   document.getElementById('btn-c').className = 'mb' + (isC  ? ' on-c' : '');
   document.getElementById('btn-r').className = 'mb' + (!isC ? ' on-r' : '');
 
-  // Phase bar styling
-  var p1bar    = document.getElementById('phase1-bar');
-  var p2bar    = document.getElementById('phase2-bar');
-  var p1radio  = document.getElementById('phase1-radio');
-  var p2radio  = document.getElementById('phase2-radio');
-  var p1detail = document.getElementById('phase1-detail');
-  var p2detail = document.getElementById('phase2-detail');
-  var p1check  = document.getElementById('phase1-check');
-  var p2check  = document.getElementById('phase2-check');
+  // Toggle button styling
+  var silenceBtn  = document.getElementById('mode-silence-btn');
+  var silenceDesc = document.getElementById('mode-silence-desc');
+  var silRadio    = document.getElementById('silence-radio');
+  var hearBtn     = document.getElementById('mode-hear-btn');
+  var hearDesc    = document.getElementById('mode-hear-desc');
+  var hearRadio   = document.getElementById('hear-radio');
 
   if (!isC) {
-    // Phase 1 ACTIVE — Hear Tone (bright blue, full opacity, left border accent)
-    if (p1bar)   {
-      p1bar.style.background  = '#e8ecff';
-      p1bar.style.opacity     = '1';
-      p1bar.style.borderLeft  = '4px solid #3a5ce8';
+    // Hear Tone active — Find Silence card shows as inactive/off
+    if (silenceBtn) { silenceBtn.style.background = '#e6fff4'; }
+    if (silenceDesc) silenceDesc.style.display = 'none';
+    if (silRadio) {
+      silRadio.style.background    = '#fff';
+      silRadio.style.borderColor   = '#c8d8c8';
+      if (silRadio.querySelector('span')) silRadio.querySelector('span').style.background = 'transparent';
     }
-    // Phase 2 INACTIVE — heavily dimmed, greyed out
-    if (p2bar)   {
-      p2bar.style.background  = '#f8fafb';
-      p2bar.style.opacity     = '0.4';
-      p2bar.style.borderLeft  = '4px solid transparent';
-    }
-    // Radio: p1 filled blue, p2 empty grey
-    if (p1radio) { p1radio.style.borderColor = '#3a5ce8'; p1radio.style.background = '#3a5ce8'; p1radio.querySelector('div').style.background = '#fff'; }
-    if (p2radio) { p2radio.style.borderColor = '#c8cee8'; p2radio.style.background = '#fff';     p2radio.querySelector('div').style.background = 'transparent'; }
-    if (p1detail) p1detail.style.display = 'block';
-    if (p2detail) p2detail.style.display = 'none';
-    if (p1check)  p1check.style.display  = 'none';
-    if (p2check)  p2check.style.display  = 'none';
   } else {
-    // Phase 2 ACTIVE — Find Silence (bright green, full opacity, left border accent)
-    if (p2bar)   {
-      p2bar.style.background  = '#e6fff4';
-      p2bar.style.opacity     = '1';
-      p2bar.style.borderLeft  = '4px solid #0a7a55';
+    // Find Silence active — green filled radio, show description
+    if (silenceBtn) { silenceBtn.style.background = '#d0f5e8'; }
+    if (silenceDesc) silenceDesc.style.display = 'block';
+    if (silRadio) {
+      silRadio.style.background    = '#0a7a55';
+      silRadio.style.borderColor   = '#0a7a55';
+      if (silRadio.querySelector('span')) silRadio.querySelector('span').style.background = '#fff';
     }
-    // Phase 1 INACTIVE — heavily dimmed, ticked off
-    if (p1bar)   {
-      p1bar.style.background  = '#f4f6ff';
-      p1bar.style.opacity     = '0.4';
-      p1bar.style.borderLeft  = '4px solid transparent';
-    }
-    // Radio: p1 green tick (done), p2 filled green (active)
-    if (p1radio) { p1radio.style.borderColor = '#0a7a55'; p1radio.style.background = '#0a7a55'; p1radio.querySelector('div').style.background = '#fff'; }
-    if (p2radio) { p2radio.style.borderColor = '#0a7a55'; p2radio.style.background = '#0a7a55'; p2radio.querySelector('div').style.background = '#fff'; }
-    if (p1detail) p1detail.style.display = 'none';
-    if (p2detail) p2detail.style.display = 'block';
-    if (p1check)  p1check.style.display  = 'inline';
-    if (p2check)  p2check.style.display  = 'none';
   }
 
   updateScanTag();
-  if (playing) { startAudio(); }
+  // Restart audio with correct phase if already playing
+  if (playing) { playManualTone(s2f(sv)); }
+  if (scanActive && !scanPaused) { stopNodesOnly(); buildScanAudio(s2f(sv)); }
 }
 
 // ── Palette ────────────────────────────────────────────────────
@@ -1956,14 +1929,31 @@ function buildScanAudio(frequency) {
   }
 
   gainNode = masterGain;
-  // StereoPanner at 0 = perfect centre on all platforms including iOS
-  var scanPanner = ctx.createStereoPanner ? ctx.createStereoPanner() : null;
-  if (scanPanner) {
-    scanPanner.pan.value = 0;
-    masterGain.connect(scanPanner);
-    scanPanner.connect(ctx.destination);
+
+  // Find Silence mode: invert phase 180° using a gain of -1 on an inverter node.
+  // This plays the exact opposite waveform — at the matching frequency it partially
+  // cancels with the tinnitus signal in the auditory system, making it less perceptible.
+  if (mode === 'cancel') {
+    var inverter = ctx.createGain();
+    inverter.gain.value = -1; // 180° phase inversion
+    masterGain.connect(inverter);
+    var scanPanner = ctx.createStereoPanner ? ctx.createStereoPanner() : null;
+    if (scanPanner) {
+      scanPanner.pan.value = 0;
+      inverter.connect(scanPanner);
+      scanPanner.connect(ctx.destination);
+    } else {
+      inverter.connect(ctx.destination);
+    }
   } else {
-    masterGain.connect(ctx.destination);
+    var scanPanner = ctx.createStereoPanner ? ctx.createStereoPanner() : null;
+    if (scanPanner) {
+      scanPanner.pan.value = 0;
+      masterGain.connect(scanPanner);
+      scanPanner.connect(ctx.destination);
+    } else {
+      masterGain.connect(ctx.destination);
+    }
   }
   return masterGain;
 }
