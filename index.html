@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Tinnitus Finder v2.3">
+<meta name="apple-mobile-web-app-title" content="Tinnitus Finder v2.3.1">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#eef1fb">
 <!-- Prevent iOS Safari zoom on input focus (inputs < 16px trigger zoom) -->
@@ -17,7 +17,7 @@
   #freq-manual { font-size: 32px !important; touch-action: manipulation; }
   input[type="range"] { touch-action: pan-x; -webkit-appearance: none; }
 </style>
-<title>Tinnitus Finder v2.3</title>
+<title>Tinnitus Finder v2.3.1</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
@@ -417,7 +417,7 @@ footer { font-size: 12px; font-weight: 500; color: #8890b8; text-align: center; 
 <body>
 
 <header>
-  <div class="logo">Tinnitus <span>Finder</span> <span style="font-size:11px;font-weight:600;color:#8890b8;letter-spacing:.05em">v2.3</span></div>
+  <div class="logo">Tinnitus <span>Finder</span> <span style="font-size:11px;font-weight:600;color:#8890b8;letter-spacing:.05em">v2.3.1</span></div>
   <button id="settings-btn" onclick="toggleSettings()">⚙</button>
 </header>
 
@@ -593,15 +593,15 @@ footer { font-size: 12px; font-weight: 500; color: #8890b8; text-align: center; 
       <div class="c-label" style="margin-bottom:0">Manual Input</div>
       <span style="font-size:11px;font-weight:600;color:#a8b8d8;margin-left:4px">— override auto-scan frequency</span>
     </div>
-    <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;width:100%">
       <select id="saved-freq-select"
-        style="flex:1;padding:10px 12px;border-radius:10px;border:2px solid #c8cee8;
+        style="flex:1;min-width:0;padding:10px 8px;border-radius:10px;border:2px solid #c8cee8;
           background:#f4f6fd;font-family:'DM Sans',sans-serif;font-size:13px;
           font-weight:600;color:#3a4070;outline:none;cursor:pointer;"
         onchange="loadFromSelect(this)">
         <option value="">📂 Saved frequencies…</option>
       </select>
-      <button class="play-btn" id="play-btn-visible" style="flex-shrink:0;width:auto;padding:10px 18px">
+      <button class="play-btn" id="play-btn-visible" style="flex-shrink:0;width:auto;padding:10px 12px;font-size:13px">
         <span class="pdot" id="pdot-visible"></span>
         <span id="play-lbl-visible">♪ Hear Tone</span>
       </button>
