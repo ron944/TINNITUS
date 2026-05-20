@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Tinnitus Finder v2.4.1">
+<meta name="apple-mobile-web-app-title" content="Tinnitus Finder v2.4.2">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#eef1fb">
 <!-- Prevent iOS Safari zoom on input focus (inputs < 16px trigger zoom) -->
@@ -17,7 +17,7 @@
   #freq-manual { font-size: 32px !important; touch-action: manipulation; }
   input[type="range"] { touch-action: pan-x; -webkit-appearance: none; }
 </style>
-<title>Tinnitus Finder v2.4.1</title>
+<title>Tinnitus Finder v2.4.2</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
@@ -417,7 +417,7 @@ footer { font-size: 12px; font-weight: 500; color: #8890b8; text-align: center; 
 <body>
 
 <header>
-  <div class="logo">Tinnitus <span>Finder</span> <span style="font-size:11px;font-weight:600;color:#8890b8;letter-spacing:.05em">v2.4.1</span></div>
+  <div class="logo">Tinnitus <span>Finder</span> <span style="font-size:11px;font-weight:600;color:#8890b8;letter-spacing:.05em">v2.4.2</span></div>
   <button id="settings-btn" onclick="toggleSettings()">⚙</button>
 </header>
 
@@ -837,36 +837,54 @@ footer { font-size: 12px; font-weight: 500; color: #8890b8; text-align: center; 
     <div class="c-label" style="margin-bottom:12px">How This App Works</div>
 
     <div style="font-size:13px;font-weight:500;color:#555878;line-height:1.8">
-      Tinnitus Finder helps you identify the exact frequency of your tinnitus — the pitch of the ringing, buzzing or hissing sound in your ears. Once identified, that frequency can be used for therapeutic sound treatments.
+      Tinnitus Finder helps you identify the exact frequency of your tinnitus — the pitch of the ringing, buzzing or hissing sound in your ears. Once identified, that frequency can be used for therapeutic sound treatments. The process has three steps.
     </div>
 
-    <div style="margin-top:16px">
-      <div style="font-size:12px;font-weight:800;color:#3a5ce8;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Step 1 — Find it (Auto Scan)</div>
-      <div style="font-size:13px;font-weight:500;color:#555878;line-height:1.8">
-        Press <strong>▶ Start Auto Scan</strong>. The app plays tones that automatically sweep through a range of frequencies — from low rumbles to high pitches. It cycles through six different sound types (swept tone, sine wave, pulsed, pink noise, white noise, brown noise) across the full range.<br><br>
-        Sit quietly with headphones on and <strong>listen for a moment when the sound seems to blend with, echo, or interact with your tinnitus</strong>. When that happens, press <strong>☀ That's it! — Pause here</strong>. The scan freezes at that frequency.
+    <!-- Step 1 -->
+    <div style="margin-top:16px;padding:14px;background:#e8ecff;border-radius:12px;border-left:4px solid #3a5ce8">
+      <div style="font-size:12px;font-weight:800;color:#3a5ce8;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">① Auto Scan — Find the rough frequency</div>
+      <div style="font-size:13px;font-weight:500;color:#3a4080;line-height:1.8">
+        Put on headphones and press <strong>▶ Start Auto Scan</strong>. The app automatically plays tones that step through frequencies from low to high, cycling through six sound types (swept tone, sine wave, pulsed, pink noise, white noise, brown noise).<br><br>
+        Sit quietly and <strong>listen for a moment when the sound seems to blend with, echo, or interact with your tinnitus</strong>. It might feel like the tone is sitting on top of your tinnitus, or briefly makes it louder or different.<br><br>
+        When that happens, press <strong>☀ That's it! — Pause here</strong>. The scan freezes at that frequency.<br><br>
+        <strong>Step size tip:</strong> Start with a larger step (10–25 Hz) to quickly find the rough area. Once you're close, reduce the step size to 1–2 Hz to zero in on the exact frequency. For example: do a first pass at 25 Hz to find the general zone, then restart with 1 Hz steps in that narrower range.
       </div>
     </div>
 
-    <div style="margin-top:14px">
-      <div style="font-size:12px;font-weight:800;color:#0a7a55;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Step 2 — Pin it (Manual Input)</div>
-      <div style="font-size:13px;font-weight:500;color:#555878;line-height:1.8">
-        Once you have a rough frequency, use <strong>Manual Input</strong> to type it in exactly. Press <strong>♪ Hear Tone</strong> to play it. Switch to <strong>Find Silence</strong> mode (tap the phase card) — at very low volume, the tone will feel like it <em>dissolves into</em> your tinnitus at the exact matching frequency. Fine-tune until you find that point, then press <strong>✓ Save this frequency</strong>.
+    <!-- Step 2 -->
+    <div style="margin-top:12px;padding:14px;background:#f4f6fd;border-radius:12px;border-left:4px solid #3a5ce8">
+      <div style="font-size:12px;font-weight:800;color:#3a5ce8;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">② Manual Input — Confirm and fine-tune</div>
+      <div style="font-size:13px;font-weight:500;color:#3a4080;line-height:1.8">
+        The frequency from the auto scan appears automatically in the <strong>Manual Input</strong> field. Press <strong>♪ Hear Tone</strong> to listen to it.<br><br>
+        Use the <strong>− and + buttons</strong> next to the Hz display to nudge the frequency up or down by exactly 1 Hz at a time. This lets you hone in on the precise frequency that best matches your tinnitus.<br><br>
+        You can also type a frequency directly, or select a previously saved frequency from the <strong>📂 Saved frequencies</strong> dropdown.
       </div>
     </div>
 
-    <div style="margin-top:14px">
+    <!-- Step 3 -->
+    <div style="margin-top:12px;padding:14px;background:#e6fff4;border-radius:12px;border-left:4px solid #0a7a55">
+      <div style="font-size:12px;font-weight:800;color:#0a7a55;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">③ Find Silence — Pin the exact frequency</div>
+      <div style="font-size:13px;font-weight:500;color:#2a5040;line-height:1.8">
+        Tap the <strong>◎ Find Silence</strong> card to activate phase cancellation mode. The tone now plays at low volume and 180° out of phase — the opposite waveform to your tinnitus frequency.<br><br>
+        Use the − and + buttons to step through frequencies near your estimate. At the exact matching frequency the tone will feel like it <em>dissolves into</em> or disappears into your tinnitus rather than sitting on top of it. That's your match.<br><br>
+        Press <strong>✓ Save</strong> to record the frequency.
+      </div>
+    </div>
+
+    <!-- Volume -->
+    <div style="margin-top:12px;padding:14px;background:#f8f9ff;border-radius:12px;border-left:4px solid #8890b8">
       <div style="font-size:12px;font-weight:800;color:#8890b8;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Volume Tips</div>
       <div style="font-size:13px;font-weight:500;color:#555878;line-height:1.8">
-        The <strong>app volume slider</strong> controls the software level inside the app. Your <strong>headset or device volume controls</strong> control the hardware output. Both work together — if the app is at 50% and your headset is at 50%, you hear 25% of full output.<br><br>
-        <strong>Start with the app slider at 30–50% and adjust your headset volume for comfort.</strong> For the Find Silence step, lower the app slider to around 10–20%.
+        The <strong>app volume slider</strong> and your <strong>headset or device volume</strong> work together — both affect what you hear. Start with the app at 40–60% and use your headset controls for comfort.<br><br>
+        For the <strong>Find Silence</strong> step, reduce the app volume to 10–20% — the phase cancellation effect works best at low volume where the external tone is subtle.
       </div>
     </div>
 
-    <div style="margin-top:14px">
+    <!-- Therapy -->
+    <div style="margin-top:12px;padding:14px;background:#f8f9ff;border-radius:12px;border-left:4px solid #8890b8">
       <div style="font-size:12px;font-weight:800;color:#8890b8;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Therapy Tab</div>
       <div style="font-size:13px;font-weight:500;color:#555878;line-height:1.8">
-        Once you know your frequency, the Therapy tab lets you play various therapeutic sounds for longer sessions — white noise, pink noise, notched noise (which removes your tinnitus frequency to help the brain recalibrate), binaural beats, and more.
+        Once you know your frequency, the Therapy tab provides longer-session therapeutic sounds — white, pink and brown noise, notched noise (removes your tinnitus frequency to help the brain recalibrate), binaural beats, pulsed tones, and more.
       </div>
     </div>
   </div>
@@ -952,6 +970,13 @@ footer { font-size: 12px; font-weight: 500; color: #8890b8; text-align: center; 
         <div style="font-size:13px;font-weight:800;color:#1a2060">Find Silence Mode</div>
         <div style="font-size:12px;font-weight:500;color:#555878;line-height:1.7;margin-top:3px">
           Plays the tone at a very low volume (8% of your set level). At the exact frequency of your tinnitus, the external tone will seem to "dissolve into" or become indistinguishable from your tinnitus. This is more precise than matching at full volume.
+        </div>
+      </div>
+
+      <div style="padding:12px 0;border-bottom:1px solid #eef0f8">
+        <div style="font-size:13px;font-weight:800;color:#1a2060">Step Size</div>
+        <div style="font-size:12px;font-weight:500;color:#555878;line-height:1.7;margin-top:3px">
+          How many Hz the auto scan advances between each tone during a scan. Smaller steps (1–2 Hz) are more precise but take longer. Larger steps (10–25 Hz) are faster for finding the rough area. Recommended strategy: start at 25 Hz for a quick first pass, then narrow the scan range and switch to 1–2 Hz to pinpoint the exact frequency.
         </div>
       </div>
 
