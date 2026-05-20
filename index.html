@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Tinnitus Finder v2.5.1">
+<meta name="apple-mobile-web-app-title" content="Tinnitus Finder v2.5.2">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#eef1fb">
 <!-- Prevent iOS Safari zoom on input focus (inputs < 16px trigger zoom) -->
@@ -17,7 +17,7 @@
   #freq-manual { font-size: 32px !important; touch-action: manipulation; }
   input[type="range"] { touch-action: pan-x; -webkit-appearance: none; }
 </style>
-<title>Tinnitus Finder v2.5.1</title>
+<title>Tinnitus Finder v2.5.2</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
@@ -437,7 +437,7 @@ footer { font-size: 12px; font-weight: 500; color: #8890b8; text-align: center; 
 </div>
 
 <header>
-  <div class="logo">Tinnitus <span>Finder</span> <span style="font-size:11px;font-weight:600;color:#8890b8;letter-spacing:.05em">v2.5.1</span></div>
+  <div class="logo">Tinnitus <span>Finder</span> <span style="font-size:11px;font-weight:600;color:#8890b8;letter-spacing:.05em">v2.5.2</span></div>
   <button id="settings-btn" onclick="toggleSettings()">⚙</button>
 </header>
 
@@ -528,11 +528,11 @@ footer { font-size: 12px; font-weight: 500; color: #8890b8; text-align: center; 
           Step size — <span id="step-size-label">10 Hz per step</span>
         </div>
         <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:5px">
-          <button class="speed-btn" id="step-1hz"  style="font-size:12px">1 Hz</button>
-          <button class="speed-btn" id="step-2hz"  style="font-size:12px">2 Hz</button>
-          <button class="speed-btn" id="step-5hz"  style="font-size:12px">5 Hz</button>
-          <button class="speed-btn on" id="step-10hz" style="font-size:12px">10 Hz</button>
-          <button class="speed-btn" id="step-25hz" style="font-size:12px">25 Hz</button>
+          <button class="speed-btn step-btn" id="step-1hz" style="font-size:12px">1 Hz</button>
+          <button class="speed-btn step-btn" id="step-2hz" style="font-size:12px">2 Hz</button>
+          <button class="speed-btn step-btn" id="step-5hz" style="font-size:12px">5 Hz</button>
+          <button class="speed-btn step-btn on" id="step-10hz" style="font-size:12px">10 Hz</button>
+          <button class="speed-btn step-btn" id="step-25hz" style="font-size:12px">25 Hz</button>
         </div>
       </div>
     </div>
@@ -2276,8 +2276,7 @@ function setScanStepSize(id) {
   var p = STEP_PRESETS[id];
   if (!p) return;
   SCAN_STEP_HZ = p.hz;
-  document.querySelectorAll('#step-1hz,#step-2hz,#step-5hz,#step-10hz,#step-25hz')
-    .forEach(function(b){ b.classList.remove('on'); });
+  document.querySelectorAll('.step-btn').forEach(function(b){ b.classList.remove('on'); });
   var el = document.getElementById(id);
   if (el) el.classList.add('on');
   var lbl = document.getElementById('step-size-label');
@@ -2385,8 +2384,11 @@ updateScanRange();
 
 function setScanSpeed(s, btn) {
   scanSpeed = s;
-  document.querySelectorAll('.speed-btn').forEach(function(b){ b.classList.remove('on'); });
-  btn.classList.add('on');
+  // Only clear dwell-time buttons, not step-size buttons
+  ['spd-1','spd-2','spd-3','spd-5','spd-8'].forEach(function(id){
+    var el = document.getElementById(id); if (el) el.classList.remove('on');
+  });
+  if (btn) btn.classList.add('on');
   // If scan is already running, restart the interval at the new speed
   if (scanActive && !scanPaused && scanTimer) {
     clearInterval(scanTimer);
