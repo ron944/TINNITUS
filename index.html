@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Tinnitus Finder v2.3.1">
+<meta name="apple-mobile-web-app-title" content="Tinnitus Finder v2.4.1">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#eef1fb">
 <!-- Prevent iOS Safari zoom on input focus (inputs < 16px trigger zoom) -->
@@ -17,7 +17,7 @@
   #freq-manual { font-size: 32px !important; touch-action: manipulation; }
   input[type="range"] { touch-action: pan-x; -webkit-appearance: none; }
 </style>
-<title>Tinnitus Finder v2.3.1</title>
+<title>Tinnitus Finder v2.4.1</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
@@ -417,7 +417,7 @@ footer { font-size: 12px; font-weight: 500; color: #8890b8; text-align: center; 
 <body>
 
 <header>
-  <div class="logo">Tinnitus <span>Finder</span> <span style="font-size:11px;font-weight:600;color:#8890b8;letter-spacing:.05em">v2.3.1</span></div>
+  <div class="logo">Tinnitus <span>Finder</span> <span style="font-size:11px;font-weight:600;color:#8890b8;letter-spacing:.05em">v2.4.1</span></div>
   <button id="settings-btn" onclick="toggleSettings()">⚙</button>
 </header>
 
@@ -499,6 +499,20 @@ footer { font-size: 12px; font-weight: 500; color: #8890b8; text-align: center; 
         <span style="font-size:12px;font-weight:600;color:#8890b8;min-width:32px">To</span>
         <input type="range" id="scan-to" min="0" max="1000" value="1000" step="10" oninput="updateScanRange()">
         <span class="sl-val" id="scan-to-val">14,000 Hz</span>
+      </div>
+
+      <!-- Step size selector -->
+      <div style="margin-top:10px">
+        <div style="font-size:11px;font-weight:700;color:#8890b8;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">
+          Step size — <span id="step-size-label">10 Hz per step</span>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:5px">
+          <button class="speed-btn" id="step-1hz"  style="font-size:12px">1 Hz</button>
+          <button class="speed-btn" id="step-2hz"  style="font-size:12px">2 Hz</button>
+          <button class="speed-btn" id="step-5hz"  style="font-size:12px">5 Hz</button>
+          <button class="speed-btn on" id="step-10hz" style="font-size:12px">10 Hz</button>
+          <button class="speed-btn" id="step-25hz" style="font-size:12px">25 Hz</button>
+        </div>
       </div>
     </div>
 
@@ -617,6 +631,15 @@ footer { font-size: 12px; font-weight: 500; color: #8890b8; text-align: center; 
               border-radius:8px;padding:4px 6px;outline:none;-moz-appearance:textfield;cursor:text;"
             title="Tap to type a frequency (100–14000 Hz)">
           <span style="font-size:13px;font-weight:700;color:#8890b8">Hz</span>
+          <!-- ±1 Hz nudge -->
+          <button id="manual-m1" style="width:32px;height:32px;border-radius:8px;border:2px solid #c8cee8;
+            background:#f4f6fd;font-size:16px;font-weight:700;color:#3a5ce8;cursor:pointer;
+            display:flex;align-items:center;justify-content:center;flex-shrink:0;
+            font-family:'DM Sans',sans-serif;touch-action:manipulation">−</button>
+          <button id="manual-p1" style="width:32px;height:32px;border-radius:8px;border:2px solid #c8cee8;
+            background:#f4f6fd;font-size:16px;font-weight:700;color:#3a5ce8;cursor:pointer;
+            display:flex;align-items:center;justify-content:center;flex-shrink:0;
+            font-family:'DM Sans',sans-serif;touch-action:manipulation">+</button>
         </div>
         <div style="font-size:10px;font-weight:600;color:#a8b8e8;margin-top:4px">✎ tap to enter or override</div>
       </div>
@@ -694,10 +717,54 @@ footer { font-size: 12px; font-weight: 500; color: #8890b8; text-align: center; 
       <input type="range" id="bb-b" min="1" max="40" value="10" step="1" oninput="bbUpdate()">
       <span class="sl-val">40 Hz</span>
     </div>
-    <div class="ears">
-      <div class="ear"><div class="ear-lbl">Left ear</div><div class="ear-freq" id="bb-L">6,000 Hz</div></div>
-      <div class="ear"><div class="ear-lbl">Right ear</div><div class="ear-freq" id="bb-R">6,010 Hz</div></div>
+
+    <!-- Per-ear manual input with ±1 Hz nudge -->
+    <div class="c-sep"></div>
+    <div class="c-label" style="margin-bottom:10px">Fine-tune each ear</div>
+    <div style="display:flex;gap:10px">
+
+      <!-- Left ear -->
+      <div style="flex:1;background:#f4f6fd;border-radius:12px;padding:12px;border:2px solid #e0e4f0">
+        <div style="font-size:10px;font-weight:700;color:#8890b8;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Left ear</div>
+        <div style="display:flex;align-items:center;gap:4px">
+          <button id="bb-L-m1" style="width:30px;height:30px;border-radius:7px;border:2px solid #c8cee8;
+            background:#fff;font-size:16px;font-weight:700;color:#3a5ce8;cursor:pointer;
+            font-family:'DM Sans',sans-serif;flex-shrink:0;touch-action:manipulation">−</button>
+          <input type="number" id="bb-L-input" min="100" max="14000" value="6000"
+            style="flex:1;font-family:'DM Mono',monospace;font-size:18px;font-weight:600;
+              color:#3a5ce8;border:2px dashed #a8b8e8;background:#fff;
+              border-radius:8px;padding:4px 6px;outline:none;-moz-appearance:textfield;
+              text-align:center;width:0;min-width:0"
+            oninput="bbManualInput('L',this.value)">
+          <button id="bb-L-p1" style="width:30px;height:30px;border-radius:7px;border:2px solid #c8cee8;
+            background:#fff;font-size:16px;font-weight:700;color:#3a5ce8;cursor:pointer;
+            font-family:'DM Sans',sans-serif;flex-shrink:0;touch-action:manipulation">+</button>
+        </div>
+        <div style="font-size:10px;font-weight:600;color:#a8b8d8;text-align:center;margin-top:4px">Hz</div>
+      </div>
+
+      <!-- Right ear -->
+      <div style="flex:1;background:#f4f6fd;border-radius:12px;padding:12px;border:2px solid #e0e4f0">
+        <div style="font-size:10px;font-weight:700;color:#8890b8;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Right ear</div>
+        <div style="display:flex;align-items:center;gap:4px">
+          <button id="bb-R-m1" style="width:30px;height:30px;border-radius:7px;border:2px solid #c8cee8;
+            background:#fff;font-size:16px;font-weight:700;color:#3a5ce8;cursor:pointer;
+            font-family:'DM Sans',sans-serif;flex-shrink:0;touch-action:manipulation">−</button>
+          <input type="number" id="bb-R-input" min="100" max="14000" value="6010"
+            style="flex:1;font-family:'DM Mono',monospace;font-size:18px;font-weight:600;
+              color:#3a5ce8;border:2px dashed #a8b8e8;background:#fff;
+              border-radius:8px;padding:4px 6px;outline:none;-moz-appearance:textfield;
+              text-align:center;width:0;min-width:0"
+            oninput="bbManualInput('R',this.value)">
+          <button id="bb-R-p1" style="width:30px;height:30px;border-radius:7px;border:2px solid #c8cee8;
+            background:#fff;font-size:16px;font-weight:700;color:#3a5ce8;cursor:pointer;
+            font-family:'DM Sans',sans-serif;flex-shrink:0;touch-action:manipulation">+</button>
+        </div>
+        <div style="font-size:10px;font-weight:600;color:#a8b8d8;text-align:center;margin-top:4px">Hz</div>
+      </div>
+
     </div>
+
     <div class="c-sep"></div>
     <div class="c-label">Volume</div>
     <div class="sl-row">
@@ -1594,34 +1661,30 @@ function bbUpdate() {
   fillSl('bb-b', ((beat-1)/39)*100);
   document.getElementById('bb-fv').textContent = base.toLocaleString() + ' Hz';
   document.getElementById('bb-bn').textContent = beat;
-  document.getElementById('bb-L').textContent  = base.toLocaleString() + ' Hz';
-  document.getElementById('bb-R').textContent  = (base+beat).toLocaleString() + ' Hz';
   var lbl = beat<=4?'Delta — deep relaxation':beat<=8?'Theta — meditation':beat<=13?'Alpha — calm focus':beat<=30?'Beta — alertness':'Gamma — concentration';
   document.getElementById('bb-bl').textContent = 'Hz · ' + lbl;
+  // Reset manual ear overrides when base slider changes
+  bbLFreq = null; bbRFreq = null;
+  syncBBEarInputs();
   if (bbPlay && bbL) {
     bbL.frequency.setTargetAtTime(base,       bbCtx.currentTime, 0.05);
     bbR.frequency.setTargetAtTime(base + beat, bbCtx.currentTime, 0.05);
   }
-}
-function bbVolCh() {
-  var v = parseInt(document.getElementById('bb-v').value);
-  bbVol = v/100;
-  document.getElementById('bb-vv').textContent = v + '%';
-  fillSl('bb-v', v);
-  if (bbGL) { bbGL.gain.setTargetAtTime(bbVol*0.4, bbCtx.currentTime, 0.05); }
-  if (bbGR) { bbGR.gain.setTargetAtTime(bbVol*0.4, bbCtx.currentTime, 0.05); }
 }
 function toggleBB() {
   if (!bbPlay) {
     var s    = parseFloat(document.getElementById('bb-f').value);
     var beat = parseInt(document.getElementById('bb-b').value);
     var base = s2f(s);
+    var lFreq = (bbLFreq !== null) ? bbLFreq : base;
+    var rFreq = (bbRFreq !== null) ? bbRFreq : base + beat;
     bbCtx = makeCtx();
     bbL = bbCtx.createOscillator(); bbR = bbCtx.createOscillator();
     bbGL = bbCtx.createGain();      bbGR = bbCtx.createGain();
     bbGL.gain.value = bbVol*0.4;    bbGR.gain.value = bbVol*0.4;
     bbL.type = 'sine'; bbR.type = 'sine';
-    bbL.frequency.value = base; bbR.frequency.value = base + beat;
+    bbL.frequency.value = lFreq;
+    bbR.frequency.value = rFreq;
     var merger = bbCtx.createChannelMerger(2);
     bbL.connect(bbGL); bbGL.connect(merger, 0, 0);
     bbR.connect(bbGR); bbGR.connect(merger, 0, 1);
@@ -2041,6 +2104,80 @@ Object.keys(FREQ_PRESETS).forEach(function(id) {
 Object.keys(FREQ_MARKERS).forEach(function(id) {
   addBtn(id, function(){ jumpToFreq(id); });
 });
+// ── Scan step size ─────────────────────────────────────────────
+// Fixed Hz increment per step — consistent across the full frequency range
+var SCAN_STEP_HZ = 10; // default: 10 Hz per step
+
+var STEP_PRESETS = {
+  'step-1hz':  { hz: 1,   label: '1 Hz'  },
+  'step-2hz':  { hz: 2,   label: '2 Hz'  },
+  'step-5hz':  { hz: 5,   label: '5 Hz'  },
+  'step-10hz': { hz: 10,  label: '10 Hz' },
+  'step-25hz': { hz: 25,  label: '25 Hz' }
+};
+
+function setScanStepSize(id) {
+  var p = STEP_PRESETS[id];
+  if (!p) return;
+  SCAN_STEP_HZ = p.hz;
+  document.querySelectorAll('#step-1hz,#step-2hz,#step-5hz,#step-10hz,#step-25hz')
+    .forEach(function(b){ b.classList.remove('on'); });
+  var el = document.getElementById(id);
+  if (el) el.classList.add('on');
+  var lbl = document.getElementById('step-size-label');
+  if (lbl) lbl.textContent = p.label + ' per step';
+}
+
+// Advance scanSV by exactly SCAN_STEP_HZ — convert to Hz, add step, convert back
+function advanceScanSV() {
+  var currentHz = s2f(scanSV);
+  var nextHz    = currentHz + SCAN_STEP_HZ;
+  var toHz      = s2f(scanToSV);
+  if (nextHz > toHz) {
+    // Reached end — loop back to start
+    scanSV = scanFromSV;
+    return true; // signal: end of range reached
+  }
+  scanSV = Math.min(scanToSV, Math.max(scanFromSV, f2s(nextHz)));
+  return false;
+}
+
+// ── Manual ±1 Hz nudge ─────────────────────────────────────────
+function manualNudge(delta) {
+  var fm = document.getElementById('freq-manual');
+  if (!fm) return;
+  var v = Math.max(100, Math.min(14000, parseInt(fm.value) + delta));
+  fm.value = v;
+  playManualTone(v);
+}
+
+// ── Binaural per-ear manual input ──────────────────────────────
+var bbLFreq = null;
+var bbRFreq = null;
+
+function bbManualInput(ear, val) {
+  var v = parseInt(val);
+  if (isNaN(v) || v < 20 || v > 22000) return;
+  if (ear === 'L') bbLFreq = v;
+  else             bbRFreq = v;
+  if (bbPlay) { toggleBB(); toggleBB(); }
+}
+function bbNudge(ear, delta) {
+  var inputEl = document.getElementById('bb-' + ear + '-input');
+  if (!inputEl) return;
+  var v = Math.max(20, Math.min(22000, (parseInt(inputEl.value)||0) + delta));
+  inputEl.value = v;
+  bbManualInput(ear, v);
+}
+function syncBBEarInputs() {
+  var s = parseFloat(document.getElementById('bb-f').value);
+  var beat = parseInt(document.getElementById('bb-b').value);
+  var base = s2f(s);
+  if (bbLFreq === null) { var li = document.getElementById('bb-L-input'); if (li) li.value = base; }
+  if (bbRFreq === null) { var ri = document.getElementById('bb-R-input'); if (ri) ri.value = base + beat; }
+}
+
+// ── Auto-modality cycling ──────────────────────────────────────
 var autoModCycle  = true; // auto-cycle through modalities by default
 var AUTO_MOD_SEQ  = ['swept','sine','am','pink','white','brown']; // cycle order
 var autoModIdx    = 0;     // current index in the cycle
@@ -2074,7 +2211,7 @@ var scanLastModIdx = 0; // save modality index position too
 var scanFromSV  = 0;
 var scanToSV    = 1000;
 var scanSpeed   = 3;
-var SCAN_STEPS  = 80;
+var SCAN_STEP_HZ = 10; // fixed Hz per step (default)
 
 function updateScanRange() {
   var f = parseInt(document.getElementById('scan-from').value);
@@ -2099,17 +2236,12 @@ function setScanSpeed(s, btn) {
     clearInterval(scanTimer);
     scanTimer = setInterval(function() {
       if (!scanActive || scanPaused) return;
-      var range = scanToSV - scanFromSV;
-      var step  = Math.max(1, Math.round(range / SCAN_STEPS));
-      scanSV += step;
-      if (scanSV >= scanToSV) {
-        scanSV = scanFromSV;
-        if (autoModCycle) {
-          autoModIdx++;
-          if (autoModIdx >= AUTO_MOD_SEQ.length) autoModIdx = 0;
-          scanMod = AUTO_MOD_SEQ[autoModIdx];
-          syncAllModButtons();
-        }
+      var endReached = advanceScanSV();
+      if (endReached && autoModCycle) {
+        autoModIdx++;
+        if (autoModIdx >= AUTO_MOD_SEQ.length) autoModIdx = 0;
+        scanMod = AUTO_MOD_SEQ[autoModIdx];
+        syncAllModButtons();
       }
       runScanStep();
     }, scanSpeed * 1000);
@@ -2168,24 +2300,12 @@ function startScan(resume) {
 
   scanTimer = setInterval(function() {
     if (!scanActive || scanPaused) return;
-
-    // Advance frequency
-    var range = scanToSV - scanFromSV;
-    var step  = Math.max(1, Math.round(range / SCAN_STEPS));
-    scanSV += step;
-
-    if (scanSV >= scanToSV) {
-      // Reached end of frequency range
-      scanSV = scanFromSV; // reset to start of range
-      if (autoModCycle) {
-        // Move to next modality
-        autoModIdx++;
-        if (autoModIdx >= AUTO_MOD_SEQ.length) {
-          autoModIdx = 0; // all modalities done — loop back
-        }
-        scanMod = AUTO_MOD_SEQ[autoModIdx];
-        syncAllModButtons();
-      }
+    var endReached = advanceScanSV();
+    if (endReached && autoModCycle) {
+      autoModIdx++;
+      if (autoModIdx >= AUTO_MOD_SEQ.length) autoModIdx = 0;
+      scanMod = AUTO_MOD_SEQ[autoModIdx];
+      syncAllModButtons();
     }
     runScanStep();
   }, scanSpeed * 1000);
@@ -2306,17 +2426,12 @@ function toggleScanPause() {
     runScanStep();
     scanTimer = setInterval(function() {
       if (!scanActive || scanPaused) return;
-      var range = scanToSV - scanFromSV;
-      var step  = Math.max(1, Math.round(range / SCAN_STEPS));
-      scanSV += step;
-      if (scanSV >= scanToSV) {
-        scanSV = scanFromSV;
-        if (autoModCycle) {
-          autoModIdx++;
-          if (autoModIdx >= AUTO_MOD_SEQ.length) autoModIdx = 0;
-          scanMod = AUTO_MOD_SEQ[autoModIdx];
-          syncAllModButtons();
-        }
+      var endReached = advanceScanSV();
+      if (endReached && autoModCycle) {
+        autoModIdx++;
+        if (autoModIdx >= AUTO_MOD_SEQ.length) autoModIdx = 0;
+        scanMod = AUTO_MOD_SEQ[autoModIdx];
+        syncAllModButtons();
       }
       runScanStep();
     }, scanSpeed * 1000);
@@ -2810,6 +2925,21 @@ addBtn('nudge-rr', function(){ scanNudge(10);  });
   addBtn('mmod-'+m, function(){ setManualMod(m); });
 });
 
+// Step size buttons
+['step-1hz','step-2hz','step-5hz','step-10hz','step-25hz'].forEach(function(id){
+  addBtn(id, function(){ setScanStepSize(id); });
+});
+
+// Manual ±1 Hz nudge
+addBtn('manual-m1', function(){ manualNudge(-1); });
+addBtn('manual-p1', function(){ manualNudge(1);  });
+
+// Binaural ear nudge buttons
+addBtn('bb-L-m1', function(){ bbNudge('L', -1); });
+addBtn('bb-L-p1', function(){ bbNudge('L',  1); });
+addBtn('bb-R-m1', function(){ bbNudge('R', -1); });
+addBtn('bb-R-p1', function(){ bbNudge('R',  1); });
+
 // Play button
 addBtn('play-btn', function(){ togglePlay(); });
 addBtn('manual-stop-btn', function(){ togglePlay(); });
@@ -2878,6 +3008,7 @@ setAutoModCycle(true);
 
 setMode('raw');
 syncAllModButtons();
+setScanStepSize('step-10hz');
 // Explicitly set defaults — dwell 3s, volume 50%
 setScanSpeed(3, document.getElementById('spd-3'));
 syncKTFVol(50);
@@ -2885,6 +3016,7 @@ fillSl('scan-vol-sl', 50);
 var ktfSl = document.getElementById('ktf-vol-sl');
 if (ktfSl) fillSl(ktfSl, 50);
 initTherapySliders();
+syncBBEarInputs();
 updateUI();
 
 // ── iOS scroll audio resume ─────────────────────────────────────
