@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Tinnitus Finder v2.4.2">
+<meta name="apple-mobile-web-app-title" content="Tinnitus Finder v2.5.1">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#eef1fb">
 <!-- Prevent iOS Safari zoom on input focus (inputs < 16px trigger zoom) -->
@@ -17,7 +17,7 @@
   #freq-manual { font-size: 32px !important; touch-action: manipulation; }
   input[type="range"] { touch-action: pan-x; -webkit-appearance: none; }
 </style>
-<title>Tinnitus Finder v2.4.2</title>
+<title>Tinnitus Finder v2.5.1</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
@@ -416,8 +416,28 @@ footer { font-size: 12px; font-weight: 500; color: #8890b8; text-align: center; 
 </head>
 <body>
 
+<!-- Disclaimer banner -->
+<div id="disclaimer-banner" style="width:100%;max-width:480px;background:#fff3e0;
+  border-bottom:2px solid #ffcc80;padding:10px 16px;
+  display:flex;align-items:flex-start;gap:10px;box-sizing:border-box">
+  <span style="font-size:14px;flex-shrink:0">⚕️</span>
+  <div style="font-size:11px;font-weight:600;color:#7a4500;line-height:1.6;flex:1">
+    <strong>Not a medical device.</strong> For personal use only. Not a substitute for professional medical advice.
+    <button onclick="document.getElementById('disclaimer-banner').style.display='none'"
+      style="background:none;border:none;color:#7a4500;font-size:11px;font-weight:700;
+        cursor:pointer;margin-left:6px;text-decoration:underline;padding:0;font-family:inherit">
+      Got it
+    </button>
+    <button onclick="showTab('legal',document.querySelector('.tab:last-child'))"
+      style="background:none;border:none;color:#3a5ce8;font-size:11px;font-weight:700;
+        cursor:pointer;margin-left:4px;text-decoration:underline;padding:0;font-family:inherit">
+      Full terms
+    </button>
+  </div>
+</div>
+
 <header>
-  <div class="logo">Tinnitus <span>Finder</span> <span style="font-size:11px;font-weight:600;color:#8890b8;letter-spacing:.05em">v2.4.2</span></div>
+  <div class="logo">Tinnitus <span>Finder</span> <span style="font-size:11px;font-weight:600;color:#8890b8;letter-spacing:.05em">v2.5.1</span></div>
   <button id="settings-btn" onclick="toggleSettings()">⚙</button>
 </header>
 
@@ -453,6 +473,7 @@ footer { font-size: 12px; font-weight: 500; color: #8890b8; text-align: center; 
   <button class="tab"     onclick="showTab('timer',this)">Session</button>
   <button class="tab"     onclick="showTab('saved',this)">Saved</button>
   <button class="tab"     onclick="showTab('help',this)">Help</button>
+  <button class="tab"     onclick="showTab('legal',this)">Legal</button>
 </div>
 
 <!-- ═══ MATCH ═══ -->
@@ -1001,6 +1022,116 @@ footer { font-size: 12px; font-weight: 500; color: #8890b8; text-align: center; 
         </div>
       </div>
 
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══ LEGAL ═══ -->
+<div class="panel" id="panel-legal">
+
+  <!-- Medical disclaimer — most critical -->
+  <div class="card" style="border:2px solid #ffb8a8;background:#fff8f6">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+      <div style="font-size:20px">⚠️</div>
+      <div class="c-label" style="margin-bottom:0;color:#cc3300">Important Medical Disclaimer</div>
+    </div>
+    <div style="font-size:13px;font-weight:500;color:#5a2a20;line-height:1.8">
+      Tinnitus Finder is <strong>not a medical device</strong> and is <strong>not a therapeutic good</strong> as defined under the <em>Therapeutic Goods Act 1989</em> (Cth). It has not been assessed, approved or registered by the Therapeutic Goods Administration (TGA) of Australia.<br><br>
+      This application does <strong>not diagnose, treat, cure, prevent or manage</strong> any medical condition, including tinnitus. It is a general-purpose sound frequency exploration tool intended for personal, informational and recreational use only.<br><br>
+      <strong>Do not rely on this app as a substitute for professional medical advice, diagnosis or treatment.</strong> If you experience tinnitus, hearing loss, dizziness, ear pain, or any change in your hearing, consult a qualified medical practitioner, audiologist or ear, nose and throat (ENT) specialist promptly.<br><br>
+      Results vary between individuals. No specific outcome, benefit or improvement to your tinnitus or hearing is claimed, represented or guaranteed.
+    </div>
+  </div>
+
+  <!-- Terms of Use -->
+  <div class="card">
+    <div class="c-label" style="margin-bottom:12px">Terms of Use</div>
+    <div style="font-size:12px;font-weight:500;color:#555878;line-height:1.8">
+      <strong>Last updated: 2026. Governed by the laws of Queensland, Australia. Any disputes are subject to the exclusive jurisdiction of the courts of Queensland.</strong><br><br>
+
+      By using Tinnitus Finder (the "Application"), you agree to the following terms. If you do not agree, do not use the Application.<br><br>
+
+      <strong>1. Nature of the Application</strong><br>
+      Tinnitus Finder is a software application that generates audio tones and sounds to assist users in exploring and identifying sound frequencies. It is provided for informational and personal use only. It is not a medical device, clinical tool, or registered therapeutic product.<br><br>
+
+      <strong>2. No Medical Advice</strong><br>
+      Nothing in this Application constitutes medical advice, and nothing should be construed as such. The information, features and outputs of this Application are general in nature and do not take into account your individual health circumstances. Always seek the advice of a qualified health professional before making decisions about your health.<br><br>
+
+      <strong>3. Limitation of Liability</strong><br>
+      To the maximum extent permitted by the <em>Australian Consumer Law</em> (Schedule 2 of the <em>Competition and Consumer Act 2010</em> (Cth)) and other applicable legislation, Redlum International Pty Ltd and its officers, employees and agents exclude all liability for any loss, damage, cost or expense (whether direct, indirect, consequential or otherwise) arising from or in connection with your use of, or inability to use, this Application.<br><br>
+      Where liability cannot be excluded under Australian Consumer Law, our liability is limited to the extent permitted by law, including (at our option) re-supplying the service or paying the cost of having the service re-supplied.<br><br>
+
+      <strong>4. Australian Consumer Law</strong><br>
+      Our services come with guarantees that cannot be excluded under the Australian Consumer Law. You are entitled to a replacement or refund for a major failure and compensation for any other reasonably foreseeable loss or damage. You are also entitled to have services remedied if they fail to be of acceptable quality.<br><br>
+
+      <strong>5. Use at Your Own Risk</strong><br>
+      Audio content — particularly at high volumes — can cause or worsen hearing damage. You are solely responsible for setting appropriate volume levels. Use headphones at safe listening volumes. The recommended safe listening level is below 80 dB for no more than 40 hours per week (World Health Organization guidelines). Redlum International Pty Ltd accepts no liability for hearing damage arising from use of this Application.<br><br>
+
+      <strong>6. Intellectual Property</strong><br>
+      All content, design, code and functionality in this Application is the intellectual property of Redlum International Pty Ltd and is protected under Australian and international copyright law. You may not copy, reproduce, distribute or create derivative works without prior written consent.<br><br>
+
+      <strong>7. Privacy</strong><br>
+      This Application currently stores data locally on your device only. No personal information is transmitted to external servers without your explicit consent. In the event a cloud-based account system is introduced, a full Privacy Policy compliant with the <em>Privacy Act 1988</em> (Cth) and the Australian Privacy Principles (APPs) will be provided and your consent obtained before any data collection occurs.<br><br>
+
+      <strong>8. Modifications</strong><br>
+      We reserve the right to modify these Terms at any time. Continued use of the Application after changes constitutes acceptance of the revised Terms.
+    </div>
+  </div>
+
+  <!-- Privacy Policy -->
+  <div class="card">
+    <div class="c-label" style="margin-bottom:12px">Privacy Policy</div>
+    <div style="font-size:12px;font-weight:500;color:#555878;line-height:1.8">
+      <strong>Redlum International Pty Ltd — Privacy Policy</strong><br>
+      Registered in Queensland, Australia. Governed by the <em>Privacy Act 1988</em> (Cth) and the Australian Privacy Principles.<br><br>
+
+      <strong>What we collect (current version)</strong><br>
+      This version of Tinnitus Finder stores all data locally on your device using your browser's storage. We do not collect, transmit or store any personal information on external servers. No account, login or personal details are required to use the Application.<br><br>
+
+      <strong>What we may collect (future versions)</strong><br>
+      Future versions may offer optional account registration. If introduced, we will collect only the minimum information necessary — typically an email address — to provide the service. Full details will be provided at the point of collection and your explicit consent obtained.<br><br>
+
+      <strong>How we use information</strong><br>
+      Any information collected will be used solely to provide, improve and support the Application. We will not sell, rent or share your personal information with third parties for marketing purposes.<br><br>
+
+      <strong>Security</strong><br>
+      We take reasonable steps to protect personal information from misuse, interference, loss, unauthorised access, modification or disclosure.<br><br>
+
+      <strong>Access and correction</strong><br>
+      You have the right to access and correct any personal information we hold about you. Contact us at the address below.<br><br>
+
+      <strong>Complaints</strong><br>
+      If you have a privacy concern, contact us first. If unresolved, you may lodge a complaint with the Office of the Australian Information Commissioner (OAIC) at www.oaic.gov.au.
+    </div>
+  </div>
+
+  <!-- Safe use -->
+  <div class="card">
+    <div class="c-label" style="margin-bottom:12px">Safe Use Guidelines</div>
+    <div style="font-size:12px;font-weight:500;color:#555878;line-height:1.8">
+      <strong>Hearing safety</strong><br>
+      Prolonged exposure to loud sounds can cause permanent hearing damage. Always start at a low volume and increase gradually. Follow the World Health Organization's safe listening guidelines: below 80 dB for a maximum of 40 hours per week with headphones.<br><br>
+
+      <strong>Who should not use this app</strong><br>
+      Do not use this Application without first consulting a medical professional if you have: a cochlear implant, active ear infection, recent ear surgery, Menière's disease, hyperacusis (sound sensitivity), or any condition affecting your hearing or balance. This Application is not suitable for children under 18 without parental supervision.<br><br>
+
+      <strong>Stop use and seek medical attention if</strong><br>
+      You experience increased tinnitus, pain, dizziness, hearing loss, headache or nausea during or after use.
+    </div>
+  </div>
+
+  <!-- Contact -->
+  <div class="card" style="background:#f4f6fd">
+    <div class="c-label" style="margin-bottom:8px">Contact</div>
+    <div style="font-size:12px;font-weight:500;color:#555878;line-height:1.8">
+      Redlum International Pty Ltd<br>
+      PO Box 8283<br>
+      Gold Coast MC, Queensland 9726<br>
+      Australia<br><br>
+      📧 <a href="mailto:tinnitus@redlum.com.au" style="color:#3a5ce8;font-weight:600">tinnitus@redlum.com.au</a><br><br>
+      For support, privacy queries or legal notices, please contact us at the address or email above.<br><br>
+      <span style="font-size:11px;color:#8890b8">© 2026 Redlum International Pty Ltd. All rights reserved. Tinnitus Finder is a trademark of Redlum International Pty Ltd.</span>
     </div>
   </div>
 
