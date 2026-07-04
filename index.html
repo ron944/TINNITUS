@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Tinnitus Finder v2.5.2">
+<meta name="apple-mobile-web-app-title" content="Tinnitus Finder v2.5.3">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#eef1fb">
 <!-- Prevent iOS Safari zoom on input focus (inputs < 16px trigger zoom) -->
@@ -17,7 +17,7 @@
   #freq-manual { font-size: 32px !important; touch-action: manipulation; }
   input[type="range"] { touch-action: pan-x; -webkit-appearance: none; }
 </style>
-<title>Tinnitus Finder v2.5.2</title>
+<title>Tinnitus Finder v2.5.3</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
@@ -437,7 +437,7 @@ footer { font-size: 12px; font-weight: 500; color: #8890b8; text-align: center; 
 </div>
 
 <header>
-  <div class="logo">Tinnitus <span>Finder</span> <span style="font-size:11px;font-weight:600;color:#8890b8;letter-spacing:.05em">v2.5.2</span></div>
+  <div class="logo">Tinnitus <span>Finder</span> <span style="font-size:11px;font-weight:600;color:#8890b8;letter-spacing:.05em">v2.5.3</span></div>
   <button id="settings-btn" onclick="toggleSettings()">⚙</button>
 </header>
 
@@ -596,8 +596,7 @@ footer { font-size: 12px; font-weight: 500; color: #8890b8; text-align: center; 
     <button id="scan-restart-btn" style="display:none;width:100%;padding:10px;font-size:12px;font-weight:600;background:transparent;border:none;color:#a8b8d8;cursor:pointer;font-family:'DM Sans',sans-serif;text-align:center">↺ Restart from beginning</button>
 
     <div id="scan-pause-wrap" style="display:none;flex-direction:column;gap:8px">
-      <button class="scan-pause-btn" id="scan-pause-btn">☀ That's it! — Pause here</button>
-      <button id="scan-stop-exit-btn" style="width:100%;padding:10px;font-size:13px;font-weight:700;background:#fff3f0;border:2px solid #ffb8a8;border-radius:var(--rsm);color:#cc3300;cursor:pointer;font-family:'DM Sans',sans-serif;text-align:center">■ Stop &amp; Exit</button>
+      <button class="scan-pause-btn" id="scan-pause-btn">⏸ Pause &amp; Exit</button>
       <div id="scan-step-wrap" style="display:none;flex-direction:column;gap:10px">
         <div>
           <div class="c-label" style="text-align:center;margin-bottom:8px">Compare modalities at <span id="paused-freq-label">this frequency</span></div>
@@ -664,14 +663,14 @@ footer { font-size: 12px; font-weight: 500; color: #8890b8; text-align: center; 
         </div>
         <div style="font-size:10px;font-weight:600;color:#a8b8e8;margin-top:4px">✎ tap to enter or override</div>
       </div>
-      <!-- Save + badge on one line -->
-      <div style="display:flex;flex-direction:row;align-items:center;gap:6px">
-        <button onclick="doSave()" style="font-size:12px;font-weight:700;padding:7px 10px;
+      <!-- Save on top, badge underneath -->
+      <div style="display:flex;flex-direction:column;align-items:stretch;gap:6px;flex-shrink:0">
+        <button onclick="doSave()" style="font-size:12px;font-weight:700;padding:7px 12px;
           border-radius:10px;border:2px solid #0a7a55;background:#e6fff4;color:#0a7a55;
-          cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap;touch-action:manipulation">
+          cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap;touch-action:manipulation;text-align:center">
           ✓ Save
         </button>
-        <div id="freq-badge" style="font-size:11px;font-weight:700;padding:7px 10px;border-radius:10px;
+        <div id="freq-badge" style="font-size:11px;font-weight:700;padding:5px 10px;border-radius:10px;
           background:rgba(58,92,232,.1);color:#3a5ce8;border:2px solid rgba(58,92,232,.2);
           white-space:nowrap;text-align:center">High freq</div>
       </div>
@@ -867,7 +866,7 @@ footer { font-size: 12px; font-weight: 500; color: #8890b8; text-align: center; 
       <div style="font-size:13px;font-weight:500;color:#3a4080;line-height:1.8">
         Put on headphones and press <strong>▶ Start Auto Scan</strong>. The app automatically plays tones that step through frequencies from low to high, cycling through six sound types (swept tone, sine wave, pulsed, pink noise, white noise, brown noise).<br><br>
         Sit quietly and <strong>listen for a moment when the sound seems to blend with, echo, or interact with your tinnitus</strong>. It might feel like the tone is sitting on top of your tinnitus, or briefly makes it louder or different.<br><br>
-        When that happens, press <strong>☀ That's it! — Pause here</strong>. The scan freezes at that frequency.<br><br>
+        When that happens, press <strong>⏸ Pause &amp; Exit</strong>. The scan freezes at that frequency, and you can compare modalities and fine-tune from there.<br><br>
         <strong>Step size tip:</strong> Start with a larger step (10–25 Hz) to quickly find the rough area. Once you're close, reduce the step size to 1–2 Hz to zero in on the exact frequency. For example: do a first pass at 25 Hz to find the general zone, then restart with 1 Hz steps in that narrower range.
       </div>
     </div>
@@ -2451,7 +2450,7 @@ function startScan(resume) {
   if (ssw) ssw.style.display = 'block';
   if (spw) spw.style.display = 'flex';
   if (stw) stw.style.display = 'none';
-  if (spb) { spb.className = 'scan-pause-btn'; spb.innerHTML = '&#9728; That\'s it! — Pause here'; }
+  if (spb) { spb.className = 'scan-pause-btn'; spb.innerHTML = '&#9208; Pause &amp; Exit'; }
   if (srb) srb.style.display = 'none';
 
   runScanStep();
@@ -2579,7 +2578,7 @@ function toggleScanPause() {
   } else {
     // Resume
     scanPaused = false;
-    if (spb) { spb.className = 'scan-pause-btn'; spb.innerHTML = '&#9728; That\'s it! — Pause here'; }
+    if (spb) { spb.className = 'scan-pause-btn'; spb.innerHTML = '&#9208; Pause &amp; Exit'; }
     if (stw) stw.style.display = 'none';
     runScanStep();
     scanTimer = setInterval(function() {
@@ -3059,7 +3058,6 @@ addBtn('vol-p5', function(){ adjustVol(5);  });
 addBtn('scan-start-btn',    function(){ toggleScan(); });
 addBtn('scan-restart-btn',  function(){ restartScan(); });
 addBtn('scan-pause-btn',    function(){ toggleScanPause(); });
-addBtn('scan-stop-exit-btn',function(){ stopScan(); });
 
 // Nudge buttons
 addBtn('nudge-ll', function(){ scanNudge(-10); });
