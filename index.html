@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Tinnitus Finder v2.5.3">
+<meta name="apple-mobile-web-app-title" content="Tinnitus Finder v2.5.4">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#eef1fb">
 <!-- Prevent iOS Safari zoom on input focus (inputs < 16px trigger zoom) -->
@@ -17,7 +17,7 @@
   #freq-manual { font-size: 32px !important; touch-action: manipulation; }
   input[type="range"] { touch-action: pan-x; -webkit-appearance: none; }
 </style>
-<title>Tinnitus Finder v2.5.3</title>
+<title>Tinnitus Finder v2.5.4</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
@@ -437,7 +437,7 @@ footer { font-size: 12px; font-weight: 500; color: #8890b8; text-align: center; 
 </div>
 
 <header>
-  <div class="logo">Tinnitus <span>Finder</span> <span style="font-size:11px;font-weight:600;color:#8890b8;letter-spacing:.05em">v2.5.3</span></div>
+  <div class="logo">Tinnitus <span>Finder</span> <span style="font-size:11px;font-weight:600;color:#8890b8;letter-spacing:.05em">v2.5.4</span></div>
   <button id="settings-btn" onclick="toggleSettings()">⚙</button>
 </header>
 
@@ -2489,16 +2489,21 @@ function runScanStep() {
   if (pf) pf.style.width = pct.toFixed(1) + '%';
   if (pp) pp.textContent = Math.round(pct) + '%';
 
-  // iOS fix: reuse the same AudioContext across steps — only disconnect/reconnect nodes.
-  // Recreating AudioContext on every step hits iOS limits and loses the gesture context.
+  // iOS fix: reuse the same AudioContext across steps where possible.
+  // But after the app is backgrounded, a context can become a "zombie" —
+  // it reports a valid state yet produces no sound. If we're paused (user is
+  // actively interacting after a possible background), rebuild to be safe.
   if (!ctx || ctx.state === 'closed') {
-    // Create fresh context only if we don't have one
     ctx = makeCtx();
   } else if (ctx.state === 'suspended') {
     ctx.resume();
+    // If resume doesn't take effect, the context is dead — rebuild
+    if (ctx.state === 'suspended') {
+      try { ctx.close(); } catch(e){}
+      ctx = makeCtx();
+    }
   }
 
-  // Disconnect and stop only the audio nodes, not the context
   stopNodesOnly();
   buildScanAudio(freq);
 }
@@ -2576,10 +2581,17 @@ function toggleScanPause() {
     if (sfl) sfl.textContent = 'PAUSED · ' + s2f(scanSV).toLocaleString() + ' Hz — compare modalities below';
     syncPausedModButtons();
   } else {
-    // Resume
+    // Resume — force a full context rebuild.
+    // After the app is backgrounded, iOS may kill the AudioContext while it
+    // still reports a valid state. Tearing it down guarantees a clean restart.
     scanPaused = false;
     if (spb) { spb.className = 'scan-pause-btn'; spb.innerHTML = '&#9208; Pause &amp; Exit'; }
     if (stw) stw.style.display = 'none';
+    // Full teardown of any existing (possibly dead) context
+    stopNodesOnly();
+    if (ctx) { try { ctx.close(); } catch(e){} ctx = null; }
+    // Fresh context — created inside this user gesture (Resume tap)
+    ctx = makeCtx();
     runScanStep();
     scanTimer = setInterval(function() {
       if (!scanActive || scanPaused) return;
