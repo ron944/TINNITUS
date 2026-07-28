@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Tinnitus Finder v2.5.5">
+<meta name="apple-mobile-web-app-title" content="Tinnitus Finder v2.6.1">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#eef1fb">
 <!-- Prevent iOS Safari zoom on input focus (inputs < 16px trigger zoom) -->
@@ -17,7 +17,7 @@
   #freq-manual { font-size: 32px !important; touch-action: manipulation; }
   input[type="range"] { touch-action: pan-x; -webkit-appearance: none; }
 </style>
-<title>Tinnitus Finder v2.5.5</title>
+<title>Tinnitus Finder v2.6.1</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
@@ -437,7 +437,7 @@ footer { font-size: 12px; font-weight: 500; color: #8890b8; text-align: center; 
 </div>
 
 <header>
-  <div class="logo">Tinnitus <span>Finder</span> <span style="font-size:11px;font-weight:600;color:#8890b8;letter-spacing:.05em">v2.5.5</span></div>
+  <div class="logo">Tinnitus <span>Finder</span> <span style="font-size:11px;font-weight:600;color:#8890b8;letter-spacing:.05em">v2.6.1</span></div>
   <button id="settings-btn" onclick="toggleSettings()">⚙</button>
 </header>
 
@@ -530,8 +530,8 @@ footer { font-size: 12px; font-weight: 500; color: #8890b8; text-align: center; 
         <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:5px">
           <button class="speed-btn step-btn" id="step-1hz" style="font-size:12px">1 Hz</button>
           <button class="speed-btn step-btn" id="step-2hz" style="font-size:12px">2 Hz</button>
-          <button class="speed-btn step-btn" id="step-5hz" style="font-size:12px">5 Hz</button>
-          <button class="speed-btn step-btn on" id="step-10hz" style="font-size:12px">10 Hz</button>
+          <button class="speed-btn step-btn on" id="step-5hz" style="font-size:12px">5 Hz</button>
+          <button class="speed-btn step-btn" id="step-10hz" style="font-size:12px">10 Hz</button>
           <button class="speed-btn step-btn" id="step-25hz" style="font-size:12px">25 Hz</button>
         </div>
       </div>
@@ -866,8 +866,9 @@ footer { font-size: 12px; font-weight: 500; color: #8890b8; text-align: center; 
       <div style="font-size:13px;font-weight:500;color:#3a4080;line-height:1.8">
         Put on headphones and press <strong>▶ Start Auto Scan</strong>. The app automatically plays tones that step through frequencies from low to high, cycling through six sound types (swept tone, sine wave, pulsed, pink noise, white noise, brown noise).<br><br>
         Sit quietly and <strong>listen for a moment when the sound seems to blend with, echo, or interact with your tinnitus</strong>. It might feel like the tone is sitting on top of your tinnitus, or briefly makes it louder or different.<br><br>
-        When that happens, press <strong>⏸ Pause &amp; Exit</strong>. The scan freezes at that frequency, and you can compare modalities and fine-tune from there.<br><br>
-        <strong>Step size tip:</strong> Start with a larger step (10–25 Hz) to quickly find the rough area. Once you're close, reduce the step size to 1–2 Hz to zero in on the exact frequency. For example: do a first pass at 25 Hz to find the general zone, then restart with 1 Hz steps in that narrower range.
+        When that happens, press <strong>⏸ Pause &amp; Exit</strong>. The scan freezes at that frequency and the sound stops. You can then tap any modality button to hear that sound at the frozen frequency, or use the fine-tune buttons to nudge up and down.<br><br>
+        <strong>Step size tip:</strong> Start with a larger step (10–25 Hz) to quickly find the rough area. Once you're close, reduce the step size to 1–2 Hz to zero in on the exact frequency. For example: do a first pass at 25 Hz to find the general zone, then restart with 1 Hz steps in that narrower range.<br><br>
+        <strong>Leaving the app:</strong> If you lock your phone or switch to another app mid-scan, the scan automatically pauses. When you return, it resumes on its own from where it left off — no need to restart.
       </div>
     </div>
 
@@ -2261,7 +2262,7 @@ Object.keys(FREQ_MARKERS).forEach(function(id) {
 });
 // ── Scan step size ─────────────────────────────────────────────
 // Fixed Hz increment per step — consistent across the full frequency range
-var SCAN_STEP_HZ = 10; // default: 10 Hz per step
+var SCAN_STEP_HZ = 5; // default: 5 Hz per step
 
 var STEP_PRESETS = {
   'step-1hz':  { hz: 1,   label: '1 Hz'  },
@@ -3156,14 +3157,36 @@ function updatePlayBtn() {
 
 // Resume audio when tab becomes visible again after being hidden
 // Browsers aggressively suspend AudioContext when tab is in background
+// ── Auto-pause on leaving the app ──────────────────────────────
+// When the user leaves the app (screen lock, app switch), automatically
+// pause the scan so the audio state is clean. When they return, a single
+// tap on Resume reliably restarts — no more multiple in/out attempts.
+var wasScanningBeforeHide = false;
+
 document.addEventListener('visibilitychange', function() {
-  if (document.visibilityState === 'visible') {
-    if (playing && ctx) {
-      if (ctx.state === 'suspended') { ctx.resume(); }
-      else if (ctx.state === 'closed') { startAudio(); }
+  if (document.visibilityState === 'hidden') {
+    // Leaving — remember if we were actively scanning, then pause
+    if (scanActive && !scanPaused) {
+      wasScanningBeforeHide = true;
+      toggleScanPause(); // pause cleanly (stops audio, tears down nodes)
+    } else {
+      wasScanningBeforeHide = false;
     }
-    if ((scanActive || scanPaused) && ctx) {
-      if (ctx.state === 'suspended') { ctx.resume(); }
+    // Stop manual tone too
+    if (playing) {
+      stopKeepAlive();
+      stopAudio();
+      playing = false;
+      updatePlayBtn();
+    }
+  } else {
+    // Returning to the app — auto-resume the scan if it was running
+    if (wasScanningBeforeHide && scanPaused) {
+      wasScanningBeforeHide = false;
+      // Small delay lets iOS fully restore the audio session before we rebuild
+      setTimeout(function() {
+        if (scanPaused) toggleScanPause(); // resume — rebuilds fresh context
+      }, 300);
     }
   }
 });
@@ -3178,7 +3201,7 @@ setAutoModCycle(true);
 
 setMode('raw');
 syncAllModButtons();
-setScanStepSize('step-10hz');
+setScanStepSize('step-5hz');
 // Explicitly set defaults — dwell 3s, volume 50%
 setScanSpeed(3, document.getElementById('spd-3'));
 syncKTFVol(50);
@@ -3321,37 +3344,19 @@ function stopBackgroundAudio() {
   if (bgCtx)   { try { bgCtx.close(); } catch(e){} bgCtx = null; }
 }
 
-// Start background audio whenever scan or manual play starts
-// Stop it only when everything is stopped
+// Note: auto-pause on leave (above) handles the scan state cleanly.
+// Background audio persistence is kept minimal — we no longer try to keep
+// the scan running in the background, which was unreliable on iOS.
 document.addEventListener('visibilitychange', function() {
-  if (document.visibilityState === 'hidden') {
-    // Going to background — ensure background audio is running
-    if (scanActive || scanPaused || playing) {
-      startBackgroundAudio();
-      // Resume main audio context
-      if (ctx && ctx.state === 'suspended') ctx.resume();
-    }
-  } else {
-    // Coming back to foreground — resume everything
-    if (ctx && ctx.state === 'suspended') ctx.resume();
+  if (document.visibilityState === 'visible') {
+    // Coming back — clean up any lingering background audio
     if (bgCtx && bgCtx.state === 'suspended') bgCtx.resume();
-    if (bgAudio && (scanActive || scanPaused || playing)) {
-      bgAudio.play().catch(function(){});
-    }
   }
 });
 
-// Hook into play/scan start to activate background audio
-var _origTogglePlay = togglePlay;
-togglePlay = function() {
-  _origTogglePlay.apply(this, arguments);
-  if (playing) startBackgroundAudio();
-  else if (!scanActive && !scanPaused) stopBackgroundAudio();
-};
-
-// Wire background audio to scan start/stop
-var _prevStartScan = startScan;
-startScan = function(r) { _prevStartScan(r); startBackgroundAudio(); };
+// Background audio hooks removed — the app now auto-pauses when backgrounded
+// (see the auto-pause visibilitychange handler above) which is more reliable
+// on iOS than trying to keep audio running in the background.
 </script>
 </body>
 </html>
