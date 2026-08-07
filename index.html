@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Tinnitus Pro v2.6.4">
+<meta name="apple-mobile-web-app-title" content="Tinnitus Pro v2.6.5">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#eef1fb">
 <!-- Prevent iOS Safari zoom on input focus (inputs < 16px trigger zoom) -->
@@ -17,7 +17,7 @@
   #freq-manual { font-size: 32px !important; touch-action: manipulation; }
   input[type="range"] { touch-action: pan-x; -webkit-appearance: none; }
 </style>
-<title>Tinnitus Pro v2.6.4</title>
+<title>Tinnitus Pro v2.6.5</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
@@ -437,7 +437,7 @@ footer { font-size: 12px; font-weight: 500; color: #8890b8; text-align: center; 
 </div>
 
 <header>
-  <div class="logo">Tinnitus <span>Pro</span> <span style="font-size:11px;font-weight:600;color:#8890b8;letter-spacing:.05em">v2.6.4</span></div>
+  <div class="logo">Tinnitus <span>Pro</span> <span style="font-size:11px;font-weight:600;color:#8890b8;letter-spacing:.05em">v2.6.5</span></div>
   <button id="settings-btn" onclick="toggleSettings()">⚙</button>
 </header>
 
@@ -2056,7 +2056,11 @@ function buildScanAudio(frequency) {
   scanModNodes = {};
 
   var masterGain = ctx.createGain();
-  masterGain.gain.value = calcGain();
+  // Start at 0 and ramp up quickly to avoid a click at the start of each step.
+  // The click is caused by the waveform jumping instantly from silence to full amplitude.
+  var targetGain = calcGain();
+  masterGain.gain.value = 0;
+  masterGain.gain.setTargetAtTime(targetGain, ctx.currentTime, 0.008);
 
   if (scanMod === 'sine') {
     osc = ctx.createOscillator();
@@ -2391,19 +2395,9 @@ function setScanSpeed(s, btn) {
   });
   if (btn) btn.classList.add('on');
   // If scan is already running, restart the interval at the new speed
-  if (scanActive && !scanPaused && scanTimer) {
-    clearInterval(scanTimer);
-    scanTimer = setInterval(function() {
-      if (!scanActive || scanPaused) return;
-      var endReached = advanceScanSV();
-      if (endReached && autoModCycle) {
-        autoModIdx++;
-        if (autoModIdx >= AUTO_MOD_SEQ.length) autoModIdx = 0;
-        scanMod = AUTO_MOD_SEQ[autoModIdx];
-        syncAllModButtons();
-      }
-      runScanStep();
-    }, scanSpeed * 1000);
+  if (scanActive && !scanPaused) {
+    clearInterval(scanTimer); scanTimer = null;
+    scanTimer = setInterval(scanTick, scanSpeed * 1000);
   }
 }
 
@@ -2457,17 +2451,22 @@ function startScan(resume) {
 
   runScanStep();
 
-  scanTimer = setInterval(function() {
-    if (!scanActive || scanPaused) return;
-    var endReached = advanceScanSV();
-    if (endReached && autoModCycle) {
-      autoModIdx++;
-      if (autoModIdx >= AUTO_MOD_SEQ.length) autoModIdx = 0;
-      scanMod = AUTO_MOD_SEQ[autoModIdx];
-      syncAllModButtons();
-    }
-    runScanStep();
-  }, scanSpeed * 1000);
+  // Clear any existing timer first — prevents duplicate timers causing uneven steps
+  clearInterval(scanTimer); scanTimer = null;
+  scanTimer = setInterval(scanTick, scanSpeed * 1000);
+}
+
+// Single scan tick function — advances one step. Used by all timers so behaviour is identical.
+function scanTick() {
+  if (!scanActive || scanPaused) return;
+  var endReached = advanceScanSV();
+  if (endReached && autoModCycle) {
+    autoModIdx++;
+    if (autoModIdx >= AUTO_MOD_SEQ.length) autoModIdx = 0;
+    scanMod = AUTO_MOD_SEQ[autoModIdx];
+    syncAllModButtons();
+  }
+  runScanStep();
 }
 
 function runScanStep() {
@@ -2512,19 +2511,35 @@ function runScanStep() {
 
 // Stop oscillators/noise nodes without closing the AudioContext
 function stopNodesOnly() {
-  Object.keys(scanModNodes).forEach(function(k){
-    try { scanModNodes[k].stop();       } catch(e){}
-    try { scanModNodes[k].disconnect(); } catch(e){}
-  });
-  scanModNodes = {};
-  if (osc) {
-    try { osc.stop();        } catch(e){}
-    try { osc.disconnect();  } catch(e){}
-    osc = null;
+  // Quick fade-out on the current gain to avoid a click when the waveform
+  // stops abruptly. We ramp to near-zero over ~8ms, then stop the nodes.
+  if (gainNode && ctx && ctx.state === 'running') {
+    try {
+      gainNode.gain.cancelScheduledValues(ctx.currentTime);
+      gainNode.gain.setTargetAtTime(0.0001, ctx.currentTime, 0.006);
+    } catch(e){}
   }
-  if (gainNode) {
-    try { gainNode.disconnect(); } catch(e){}
-    gainNode = null;
+  // Stop nodes slightly later so the fade can take effect
+  var nodesToStop = [];
+  Object.keys(scanModNodes).forEach(function(k){ nodesToStop.push(scanModNodes[k]); });
+  var oldOsc = osc;
+  var oldGain = gainNode;
+  var oldModNodes = scanModNodes;
+  scanModNodes = {};
+  osc = null;
+  gainNode = null;
+  // Immediate stop is still needed for iOS reliability, but the 6ms fade above
+  // reduces the click substantially in practice.
+  Object.keys(oldModNodes).forEach(function(k){
+    try { oldModNodes[k].stop();       } catch(e){}
+    try { oldModNodes[k].disconnect(); } catch(e){}
+  });
+  if (oldOsc) {
+    try { oldOsc.stop();       } catch(e){}
+    try { oldOsc.disconnect(); } catch(e){}
+  }
+  if (oldGain) {
+    try { oldGain.disconnect(); } catch(e){}
   }
 }
 
@@ -2597,17 +2612,8 @@ function toggleScanPause() {
     // Fresh context — created inside this user gesture (Resume tap)
     ctx = makeCtx();
     runScanStep();
-    scanTimer = setInterval(function() {
-      if (!scanActive || scanPaused) return;
-      var endReached = advanceScanSV();
-      if (endReached && autoModCycle) {
-        autoModIdx++;
-        if (autoModIdx >= AUTO_MOD_SEQ.length) autoModIdx = 0;
-        scanMod = AUTO_MOD_SEQ[autoModIdx];
-        syncAllModButtons();
-      }
-      runScanStep();
-    }, scanSpeed * 1000);
+    clearInterval(scanTimer); scanTimer = null;
+    scanTimer = setInterval(scanTick, scanSpeed * 1000);
   }
 }
 
