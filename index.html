@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Tinnitus Pro v2.6.10">
+<meta name="apple-mobile-web-app-title" content="Tinnitus Pro v2.6.11">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#eef1fb">
 <!-- Prevent iOS Safari zoom on input focus (inputs < 16px trigger zoom) -->
@@ -17,7 +17,7 @@
   #freq-manual { font-size: 32px !important; touch-action: manipulation; }
   input[type="range"] { touch-action: pan-x; -webkit-appearance: none; }
 </style>
-<title>Tinnitus Pro v2.6.10</title>
+<title>Tinnitus Pro v2.6.11</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
@@ -438,7 +438,7 @@ footer { font-size: 12px; font-weight: 500; color: #8890b8; text-align: center; 
 </div>
 
 <header>
-  <div class="logo">Tinnitus <span>Pro</span> <span style="font-size:11px;font-weight:600;color:#8890b8;letter-spacing:.05em">v2.6.10</span></div>
+  <div class="logo">Tinnitus <span>Pro</span> <span style="font-size:11px;font-weight:600;color:#8890b8;letter-spacing:.05em">v2.6.11</span></div>
   <button id="settings-btn" onclick="toggleSettings()">⚙</button>
 </header>
 
@@ -2732,6 +2732,9 @@ function updateNotchFreq() {
       if (n && n.notch && n.notch.frequency) {
         n.notch.frequency.setTargetAtTime(freq, thCtx.currentTime, 0.02);
       }
+      if (n && n.notch2 && n.notch2.frequency) {
+        n.notch2.frequency.setTargetAtTime(freq, thCtx.currentTime, 0.02);
+      }
     });
   }
 }
@@ -2920,17 +2923,24 @@ function makeNoiseSource(ctx, type) {
 }
 
 // ── Notched noise ───────────────────────────────────────────────
-// Pink noise + notch filter (BiquadFilter type=notch) at tinnitus freq
+// Pink noise + notch filter (BiquadFilter type=notch) at tinnitus freq.
+// Two cascaded notch filters make the cut deeper and more clearly audible
+// as the centre frequency moves.
 function buildNotched(ctx, freq) {
   var noise = makeNoiseSource(ctx, 'pink');
   var notch = ctx.createBiquadFilter();
   notch.type = 'notch';
   notch.frequency.value = freq;
-  notch.Q.value = 5; // narrow notch — ±~1 octave
+  notch.Q.value = 4;
+  var notch2 = ctx.createBiquadFilter();
+  notch2.type = 'notch';
+  notch2.frequency.value = freq;
+  notch2.Q.value = 4;
   var gain = ctx.createGain();
   gain.gain.value = thVol * 0.4;
-  noise.connect(notch); notch.connect(gain);
-  return { source: noise, gain: gain, out: gain, notch: notch };
+  noise.connect(notch); notch.connect(notch2); notch2.connect(gain);
+  // Store both filters so both track the centre frequency live
+  return { source: noise, gain: gain, out: gain, notch: notch, notch2: notch2 };
 }
 
 // ── AM (amplitude modulated) tone ───────────────────────────────
