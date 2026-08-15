@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Tinnitus Pro v2.6.7">
+<meta name="apple-mobile-web-app-title" content="Tinnitus Pro v2.6.8">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#eef1fb">
 <!-- Prevent iOS Safari zoom on input focus (inputs < 16px trigger zoom) -->
@@ -17,7 +17,7 @@
   #freq-manual { font-size: 32px !important; touch-action: manipulation; }
   input[type="range"] { touch-action: pan-x; -webkit-appearance: none; }
 </style>
-<title>Tinnitus Pro v2.6.7</title>
+<title>Tinnitus Pro v2.6.8</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
@@ -438,7 +438,7 @@ footer { font-size: 12px; font-weight: 500; color: #8890b8; text-align: center; 
 </div>
 
 <header>
-  <div class="logo">Tinnitus <span>Pro</span> <span style="font-size:11px;font-weight:600;color:#8890b8;letter-spacing:.05em">v2.6.7</span></div>
+  <div class="logo">Tinnitus <span>Pro</span> <span style="font-size:11px;font-weight:600;color:#8890b8;letter-spacing:.05em">v2.6.8</span></div>
   <button id="settings-btn" onclick="toggleSettings()">⚙</button>
 </header>
 
@@ -2216,7 +2216,7 @@ function syncKTFVol(val) {
   // Live update if audio is playing
   if (gainNode && ctx) gainNode.gain.setTargetAtTime(calcGain(), ctx.currentTime, 0.05);
   if (thCtx) {
-    thNodes.forEach(function(n){ if (n.gain) n.gain.setTargetAtTime(thVol*0.4, thCtx.currentTime, 0.05); });
+    thNodes.forEach(function(n){ if (n && n.gain && n.gain.gain) n.gain.gain.setTargetAtTime(thVol*0.4, thCtx.currentTime, 0.05); });
   }
 }
 
@@ -2783,7 +2783,7 @@ function updateTherapyVol() {
   if (kval) kval.textContent = v + '%';
   // Live update therapy gain nodes if playing
   if (thCtx) {
-    thNodes.forEach(function(n){ if (n.gain) n.gain.setTargetAtTime(thVol*0.4, thCtx.currentTime, 0.05); });
+    thNodes.forEach(function(n){ if (n && n.gain && n.gain.gain) n.gain.gain.setTargetAtTime(thVol*0.4, thCtx.currentTime, 0.05); });
   }
 }
 function adjustThVol(d) {
