@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Tinnitus Pro v2.8.4">
+<meta name="apple-mobile-web-app-title" content="Tinnitus Pro v2.9">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#eef1fb">
 <!-- Prevent iOS Safari zoom on input focus (inputs < 16px trigger zoom) -->
@@ -17,7 +17,7 @@
   #freq-manual { font-size: 32px !important; touch-action: manipulation; }
   input[type="range"] { touch-action: pan-x; -webkit-appearance: none; }
 </style>
-<title>Tinnitus Pro v2.8.4</title>
+<title>Tinnitus Pro v2.9</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
@@ -405,6 +405,14 @@ footer { font-size: 12px; font-weight: 500; color: #8890b8; text-align: center; 
   font-family: 'DM Sans', sans-serif; text-align: center;
 }
 .speed-btn.on { background: #3a5ce8; color: #fff; border-color: #3a5ce8; }
+.th-dwell-btn {
+  flex: 1; padding: 9px 4px; font-size: 12px; font-weight: 700;
+  background: #eef1fb; border: 2px solid #c8cee8;
+  border-radius: var(--rsm); color: #8890b8; cursor: pointer;
+  font-family: 'DM Sans', sans-serif; text-align: center;
+  touch-action: manipulation;
+}
+.th-dwell-btn.on { background: #3a5ce8; color: #fff; border-color: #3a5ce8; }
 /* Mode tag inside scan */
 .scan-mode-tag {
   display: inline-block; font-size: 11px; font-weight: 700;
@@ -438,7 +446,7 @@ footer { font-size: 12px; font-weight: 500; color: #8890b8; text-align: center; 
 </div>
 
 <header>
-  <div class="logo">Tinnitus <span>Pro</span> <span style="font-size:11px;font-weight:600;color:#8890b8;letter-spacing:.05em">v2.8.4</span></div>
+  <div class="logo">Tinnitus <span>Pro</span> <span style="font-size:11px;font-weight:600;color:#8890b8;letter-spacing:.05em">v2.9</span></div>
   <button id="settings-btn" onclick="toggleSettings()">⚙</button>
 </header>
 
@@ -1201,17 +1209,18 @@ footer { font-size: 12px; font-weight: 500; color: #8890b8; text-align: center; 
   </div>
 
   <!-- Notched frequency (shown only for notched noise) -->
-  <!-- Notch Sweep Speed — separate card (matches Pulse rate card format) -->
+  <!-- Notch Dwell Time — step-and-hold like Match dwell time -->
   <div class="card" id="notch-speed-card" style="display:none">
-    <div class="c-label" style="margin-bottom:10px">Notch Sweep Speed — <span id="notch-speed-label">Medium</span></div>
-    <div class="sl-row">
-      <span class="sl-lbl">Slow</span>
-      <input type="range" id="notch-speed-sl" min="1" max="10" value="4" step="1"
-        oninput="updateNotchSpeed()">
-      <span class="sl-lbl" style="text-align:right">Fast</span>
+    <div class="c-label" style="margin-bottom:10px">Notch Dwell Time per step</div>
+    <div class="speed-row">
+      <button class="th-dwell-btn" id="thd-notch-1" onclick="setThDwell(1,'notch',this)">1s</button>
+      <button class="th-dwell-btn" id="thd-notch-2" onclick="setThDwell(2,'notch',this)">2s</button>
+      <button class="th-dwell-btn on" id="thd-notch-3" onclick="setThDwell(3,'notch',this)">3s</button>
+      <button class="th-dwell-btn" id="thd-notch-5" onclick="setThDwell(5,'notch',this)">5s</button>
+      <button class="th-dwell-btn" id="thd-notch-8" onclick="setThDwell(8,'notch',this)">8s</button>
     </div>
-    <div style="font-size:11px;font-weight:600;color:#8890b8;margin-top:4px">
-      How fast the notch moves across the frequency range in auto mode
+    <div style="font-size:11px;font-weight:600;color:#8890b8;margin-top:8px">
+      How long the notch holds each frequency before stepping to the next
     </div>
   </div>
 
@@ -1228,7 +1237,7 @@ footer { font-size: 12px; font-weight: 500; color: #8890b8; text-align: center; 
       </div>
     </div>
     <div style="font-size:11px;font-weight:600;color:#8890b8;margin-bottom:10px" id="notch-mode-desc">
-      Auto mode: the notch sweeps slowly across the frequency range on its own
+      Auto mode: the notch steps across frequencies, holding each for the dwell time
     </div>
     <button id="notch-hold-btn" onclick="toggleNotchHold()"
       style="width:100%;padding:11px;margin-bottom:10px;font-size:13px;font-weight:700;
@@ -1254,30 +1263,32 @@ footer { font-size: 12px; font-weight: 500; color: #8890b8; text-align: center; 
     </div>
   </div>
 
-  <!-- AM / Swept controls -->
+  <!-- AM / Swept modulation rate (manual) -->
   <div class="card" id="mod-rate-card" style="display:none">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-      <div class="c-label" id="mod-rate-label" style="margin-bottom:0">Pulse rate</div>
-      <div style="display:flex;align-items:center;gap:8px">
-        <span style="font-size:11px;font-weight:700;color:#8890b8">Auto Speed</span>
-        <label style="position:relative;width:40px;height:24px;flex-shrink:0">
-          <input type="checkbox" id="rate-auto-toggle" checked style="position:absolute;opacity:0;width:100%;height:100%;cursor:pointer;margin:0;z-index:2">
-          <div id="rate-auto-track" style="position:absolute;inset:0;border-radius:12px;background:#3a5ce8;border:2px solid #3a5ce8;transition:background .2s"></div>
-          <div id="rate-auto-thumb" style="position:absolute;top:3px;left:19px;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.2);transition:left .2s;pointer-events:none;z-index:1"></div>
-        </label>
-      </div>
-    </div>
-    <div style="font-size:11px;font-weight:600;color:#8890b8;margin-bottom:10px" id="rate-mode-desc">
-      Auto mode: the speed varies slowly across its range on its own
-    </div>
+    <div class="c-label" id="mod-rate-label" style="margin-bottom:10px">Pulse rate</div>
     <div class="sl-row">
       <span class="sl-lbl">0.5 Hz</span>
       <input type="range" id="mod-rate-sl" min="1" max="20" value="8" step="1"
-        oninput="updateModRate()" onpointerdown="if(rateAuto){document.getElementById('rate-auto-toggle').checked=false;setRateAuto(false);}">
+        oninput="updateModRate()">
       <span class="sl-val" id="mod-rate-val">4 Hz</span>
     </div>
     <div style="font-size:11px;font-weight:600;color:#8890b8;margin-top:4px" id="mod-rate-note">
       4 Hz = theta range · try 1–4 Hz for relaxation, 8–12 Hz for focus
+    </div>
+  </div>
+
+  <!-- AM / Swept dwell time — step-and-hold like Match dwell time -->
+  <div class="card" id="mod-dwell-card" style="display:none">
+    <div class="c-label" id="mod-dwell-label" style="margin-bottom:10px">Dwell Time per step</div>
+    <div class="speed-row">
+      <button class="th-dwell-btn" id="thd-centre-1" onclick="setThDwell(1,'centre',this)">1s</button>
+      <button class="th-dwell-btn" id="thd-centre-2" onclick="setThDwell(2,'centre',this)">2s</button>
+      <button class="th-dwell-btn on" id="thd-centre-3" onclick="setThDwell(3,'centre',this)">3s</button>
+      <button class="th-dwell-btn" id="thd-centre-5" onclick="setThDwell(5,'centre',this)">5s</button>
+      <button class="th-dwell-btn" id="thd-centre-8" onclick="setThDwell(8,'centre',this)">8s</button>
+    </div>
+    <div style="font-size:11px;font-weight:600;color:#8890b8;margin-top:8px">
+      How long each frequency holds before stepping to the next
     </div>
   </div>
 
@@ -1295,7 +1306,7 @@ footer { font-size: 12px; font-weight: 500; color: #8890b8; text-align: center; 
       </div>
     </div>
     <div style="font-size:11px;font-weight:600;color:#8890b8;margin-bottom:10px" id="centre-mode-desc">
-      Auto mode: the centre frequency sweeps slowly across the range on its own
+      Auto mode: the centre frequency steps across the range, holding each for the dwell time
     </div>
     <button id="centre-hold-btn" onclick="toggleCentreHold()"
       style="width:100%;padding:11px;margin-bottom:10px;font-size:13px;font-weight:700;
@@ -2736,22 +2747,17 @@ var notchSV      = 580;       // slider value for notch centre
 var centreSV     = 580;       // slider value for AM/swept centre
 var modRate      = 4;         // Hz for AM pulse or swept wobble
 
-// Auto-sweep (like Match tab autoscan) — sweeps the notch/centre freq across range
+// Auto-sweep (like Match tab autoscan) — steps the notch/centre freq across range,
+// holding each frequency for a dwell time (just like Match dwell time).
 var notchAuto    = true;      // default ON
 var centreAuto   = true;      // default ON
-var rateAuto     = true;      // default ON — auto-vary the pulse/sweep speed
 var notchHold    = false;     // Hold freezes the sweep at current freq
 var centreHold   = false;
 var thSweepTimer = null;
 var thSweepDir   = 1;         // 1 = ascending, -1 = descending
-var TH_SWEEP_STEP_SV = 4;     // slider units per tick (smooth slow sweep)
-var TH_SWEEP_MS  = 120;       // tick interval
-var notchSweepSpeed = 4;      // notch sweep speed (1=slow, 10=fast)
-var thRateTimer  = null;
-var thRateDir    = 1;         // rate sweep direction
-var TH_RATE_STEP = 0.3;       // raw slider units per tick for rate
-var TH_RATE_MS   = 400;       // rate varies more slowly than frequency
-var thRateRaw    = 8;         // float accumulator for rate sweep (slider is step=1, can't hold decimals)
+var TH_STEP_HZ   = 250;       // Hz to advance per dwell step
+var thNotchDwell = 3;         // seconds to hold each notch frequency
+var thCentreDwell = 3;        // seconds to hold each centre frequency
 
 var MODALITY_INFO = {
   white: {
@@ -2797,13 +2803,16 @@ function setModality(m, btn) {
   document.getElementById('notch-freq-card').style.display  = isNotched ? 'block' : 'none';
   document.getElementById('notch-speed-card').style.display = isNotched ? 'block' : 'none';
   document.getElementById('mod-rate-card').style.display    = (isAM || isSwept) ? 'block' : 'none';
+  document.getElementById('mod-dwell-card').style.display   = (isAM || isSwept) ? 'block' : 'none';
   document.getElementById('mod-centre-card').style.display  = (isAM || isSwept) ? 'block' : 'none';
   if (isAM) {
     document.getElementById('mod-rate-label').textContent   = 'Pulse Rate';
+    document.getElementById('mod-dwell-label').textContent  = 'Pulse Dwell Time per step';
     document.getElementById('mod-centre-label').textContent = 'Pulse Centre Frequency';
   }
   if (isSwept) {
     document.getElementById('mod-rate-label').textContent   = 'Sweep Speed';
+    document.getElementById('mod-dwell-label').textContent  = 'Sweep Dwell Time per step';
     document.getElementById('mod-centre-label').textContent = 'Sweep Centre Frequency';
   }
 
@@ -2866,43 +2875,56 @@ function useCentreMatchFreq() {
   updateCentreFreq();
 }
 
-// ── Therapy auto-sweep ─────────────────────────────────────────
-// Sweeps the notch or centre frequency slowly up and down across the range,
-// like the Match tab autoscan but continuous (bounces at the ends).
+// ── Therapy auto-sweep (step-and-dwell, like Match tab) ────────
+// Steps the notch or centre frequency across the range in fixed Hz jumps,
+// holding each frequency for the dwell time before advancing. Bounces at ends.
 function startThSweep() {
   stopThSweep();
+  var isNotch = (thModality === 'notched');
+  var dwell = isNotch ? thNotchDwell : thCentreDwell;
   thSweepTimer = setInterval(function() {
     if (!thPlaying) { stopThSweep(); return; }
-    var isNotch = (thModality === 'notched');
-    // If held, don't advance — just keep playing the current frequency
-    if (isNotch && notchHold) return;
-    if (!isNotch && centreHold) return;
-    var cur = isNotch ? notchSV : centreSV;
-    var step = isNotch ? notchSweepSpeed : TH_SWEEP_STEP_SV;
-    cur += thSweepDir * step;
-    if (cur >= 1000) { cur = 1000; thSweepDir = -1; }
-    else if (cur <= 0) { cur = 0; thSweepDir = 1; }
-    if (isNotch) {
-      notchSV = cur;
-      document.getElementById('notch-sl').value = cur;
+    var notch = (thModality === 'notched');
+    // If held, don't advance — keep playing the current frequency
+    if (notch && notchHold) return;
+    if (!notch && centreHold) return;
+    var curFreq = notch ? s2f(notchSV) : s2f(centreSV);
+    var nextFreq = curFreq + thSweepDir * TH_STEP_HZ;
+    if (nextFreq >= 14000) { nextFreq = 14000; thSweepDir = -1; }
+    else if (nextFreq <= 100) { nextFreq = 100; thSweepDir = 1; }
+    var nextSV = Math.max(0, Math.min(1000, f2s(nextFreq)));
+    if (notch) {
+      notchSV = nextSV;
+      document.getElementById('notch-sl').value = nextSV;
       updateNotchFreq();
     } else {
-      centreSV = cur;
-      document.getElementById('centre-sl').value = cur;
+      centreSV = nextSV;
+      document.getElementById('centre-sl').value = nextSV;
       updateCentreFreq();
     }
-  }, TH_SWEEP_MS);
+  }, dwell * 1000);
 }
 function stopThSweep() {
   if (thSweepTimer) { clearInterval(thSweepTimer); thSweepTimer = null; }
 }
 
-function updateNotchSpeed() {
-  notchSweepSpeed = parseInt(document.getElementById('notch-speed-sl').value);
-  fillSl(document.getElementById('notch-speed-sl'), ((notchSweepSpeed-1)/9)*100);
-  var lbl = notchSweepSpeed <= 2 ? 'Slow' : notchSweepSpeed <= 5 ? 'Medium' : notchSweepSpeed <= 8 ? 'Fast' : 'Very fast';
-  var el = document.getElementById('notch-speed-label');
-  if (el) el.textContent = lbl;
+// Set dwell time for the notch or centre frequency sweep (like Match dwell time)
+function setThDwell(sec, which, btn) {
+  if (which === 'notch') {
+    thNotchDwell = sec;
+    document.querySelectorAll('#thd-notch-1,#thd-notch-2,#thd-notch-3,#thd-notch-5,#thd-notch-8')
+      .forEach(function(b){ b.classList.remove('on'); });
+  } else {
+    thCentreDwell = sec;
+    document.querySelectorAll('#thd-centre-1,#thd-centre-2,#thd-centre-3,#thd-centre-5,#thd-centre-8')
+      .forEach(function(b){ b.classList.remove('on'); });
+  }
+  if (btn) btn.classList.add('on');
+  // Restart the sweep at the new dwell time if currently sweeping
+  if (thPlaying && thAutoActive()) {
+    var held = (which === 'notch') ? notchHold : centreHold;
+    if (!held) startThSweep();
+  }
 }
 
 // Hold — freeze the sweep at the current frequency, sound keeps playing.
@@ -2952,11 +2974,11 @@ function setNotchAuto(on) {
   if (track) { track.style.background = on ? '#3a5ce8' : '#dde2f4'; track.style.borderColor = on ? '#3a5ce8' : '#c8cee8'; }
   if (thumb) thumb.style.left = on ? '19px' : '3px';
   if (desc)  desc.textContent = on
-    ? 'Auto mode: the notch sweeps slowly across the frequency range on its own'
+    ? 'Auto mode: the notch steps across frequencies, holding each for the dwell time'
     : 'Manual mode: use the slider and buttons to set the notch frequency';
   if (man)   man.style.display = on ? 'none' : 'block';
   if (hold)  hold.style.display = on ? 'block' : 'none';
-  // Sweep speed card only relevant in auto mode
+  // Dwell time card only relevant in auto mode
   var speedCard = document.getElementById('notch-speed-card');
   if (speedCard && thModality === 'notched') speedCard.style.display = on ? 'block' : 'none';
   // Reset hold when toggling auto
@@ -2976,60 +2998,17 @@ function setCentreAuto(on) {
   if (track) { track.style.background = on ? '#3a5ce8' : '#dde2f4'; track.style.borderColor = on ? '#3a5ce8' : '#c8cee8'; }
   if (thumb) thumb.style.left = on ? '19px' : '3px';
   if (desc)  desc.textContent = on
-    ? 'Auto mode: the centre frequency sweeps slowly across the range on its own'
+    ? 'Auto mode: the centre frequency steps across the range, holding each for the dwell time'
     : 'Manual mode: use the slider to set the centre frequency';
   if (man)   man.style.display = on ? 'none' : 'block';
   if (hold)  hold.style.display = on ? 'block' : 'none';
+  // Dwell time card only relevant in auto mode
+  var dwellCard = document.getElementById('mod-dwell-card');
+  if (dwellCard && (thModality === 'am' || thModality === 'swept')) dwellCard.style.display = on ? 'block' : 'none';
   centreHold = false;
   if (hold) { hold.innerHTML = '⏸ Hold at this frequency'; hold.style.background = '#e8ecff'; hold.style.borderColor = '#3a5ce8'; hold.style.color = '#3a5ce8'; }
   if (thPlaying && (thModality === 'am' || thModality === 'swept')) {
     if (on) startThSweep(); else stopThSweep();
-  }
-}
-
-// ── Rate (pulse/sweep speed) auto-vary ─────────────────────────
-function startThRateSweep() {
-  stopThRateSweep();
-  // Seed the float accumulator from the current slider position
-  var sl0 = document.getElementById('mod-rate-sl');
-  thRateRaw = sl0 ? parseFloat(sl0.value) : 8;
-  thRateTimer = setInterval(function() {
-    if (!thPlaying) { stopThRateSweep(); return; }
-    // Accumulate on the float, not the slider (slider step=1 would round away 0.3)
-    thRateRaw += thRateDir * TH_RATE_STEP;
-    if (thRateRaw >= 20) { thRateRaw = 20; thRateDir = -1; }
-    else if (thRateRaw <= 1) { thRateRaw = 1; thRateDir = 1; }
-    // Drive the actual rate directly from the float
-    modRate = thRateRaw / 2; // slider 1-20 → 0.5-10 Hz
-    var sl = document.getElementById('mod-rate-sl');
-    if (sl) { sl.value = Math.round(thRateRaw); fillSl(sl, ((thRateRaw-1)/19)*100); }
-    var vEl = document.getElementById('mod-rate-val');
-    if (vEl) vEl.textContent = modRate.toFixed(1).replace('.0','') + ' Hz';
-    // Update the live LFO frequency
-    if (thPlaying && thCtx) {
-      thNodes.forEach(function(n){
-        if (n && n.extra && n.extra.frequency) {
-          n.extra.frequency.setTargetAtTime(modRate, thCtx.currentTime, 0.05);
-        }
-      });
-    }
-  }, TH_RATE_MS);
-}
-function stopThRateSweep() {
-  if (thRateTimer) { clearInterval(thRateTimer); thRateTimer = null; }
-}
-function setRateAuto(on) {
-  rateAuto = on;
-  var track = document.getElementById('rate-auto-track');
-  var thumb = document.getElementById('rate-auto-thumb');
-  var desc  = document.getElementById('rate-mode-desc');
-  if (track) { track.style.background = on ? '#3a5ce8' : '#dde2f4'; track.style.borderColor = on ? '#3a5ce8' : '#c8cee8'; }
-  if (thumb) thumb.style.left = on ? '19px' : '3px';
-  if (desc)  desc.textContent = on
-    ? 'Auto mode: the speed varies slowly across its range on its own'
-    : 'Manual mode: use the slider to set the speed';
-  if (thPlaying && (thModality === 'am' || thModality === 'swept')) {
-    if (on) startThRateSweep(); else stopThRateSweep();
   }
 }
 
@@ -3263,7 +3242,6 @@ function buildSwept(ctx, centreFreq, rate) {
 
 function stopTherapy() {
   stopThSweep();
-  stopThRateSweep();
   thNodes.forEach(function(n) {
     try { if (n.source && n.source.stop) n.source.stop(); } catch(e){}
     try { if (n.extra  && n.extra.stop)  n.extra.stop();  } catch(e){}
@@ -3301,8 +3279,6 @@ function startTherapy() {
 
   // Start auto-sweep if this modality is in auto mode
   if (thAutoActive()) startThSweep();
-  // Start rate auto-vary for AM/swept if enabled
-  if ((thModality === 'am' || thModality === 'swept') && rateAuto) startThRateSweep();
 }
 
 function toggleTherapy() {
@@ -3323,7 +3299,6 @@ function initTherapySliders() {
   fillSl(document.getElementById('centre-sl'), centreSV/10);
   fillSl(document.getElementById('th-vol-sl'), 50);
   fillSl(document.getElementById('mod-rate-sl'), ((8-1)/19)*100);
-  fillSl(document.getElementById('notch-speed-sl'), ((4-1)/9)*100);
   document.getElementById('notch-val').textContent  = s2f(notchSV).toLocaleString() + ' Hz';
   document.getElementById('centre-val').textContent = s2f(centreSV).toLocaleString() + ' Hz';
   // Wire auto-sweep toggles
@@ -3331,12 +3306,8 @@ function initTherapySliders() {
   if (nat) { nat.checked = notchAuto; nat.addEventListener('change', function(){ setNotchAuto(this.checked); }); }
   var cat = document.getElementById('centre-auto-toggle');
   if (cat) { cat.checked = centreAuto; cat.addEventListener('change', function(){ setCentreAuto(this.checked); }); }
-  var rat = document.getElementById('rate-auto-toggle');
-  if (rat) { rat.checked = rateAuto; rat.addEventListener('change', function(){ setRateAuto(this.checked); }); }
   setNotchAuto(notchAuto);
   setCentreAuto(centreAuto);
-  setRateAuto(rateAuto);
-  updateNotchSpeed();
 }
 
 // Manual frequency text entry
