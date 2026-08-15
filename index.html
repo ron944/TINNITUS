@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Tinnitus Pro v2.7.1">
+<meta name="apple-mobile-web-app-title" content="Tinnitus Pro v2.8.1">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#eef1fb">
 <!-- Prevent iOS Safari zoom on input focus (inputs < 16px trigger zoom) -->
@@ -17,7 +17,7 @@
   #freq-manual { font-size: 32px !important; touch-action: manipulation; }
   input[type="range"] { touch-action: pan-x; -webkit-appearance: none; }
 </style>
-<title>Tinnitus Pro v2.7.1</title>
+<title>Tinnitus Pro v2.8.1</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
@@ -438,7 +438,7 @@ footer { font-size: 12px; font-weight: 500; color: #8890b8; text-align: center; 
 </div>
 
 <header>
-  <div class="logo">Tinnitus <span>Pro</span> <span style="font-size:11px;font-weight:600;color:#8890b8;letter-spacing:.05em">v2.7.1</span></div>
+  <div class="logo">Tinnitus <span>Pro</span> <span style="font-size:11px;font-weight:600;color:#8890b8;letter-spacing:.05em">v2.8.1</span></div>
   <button id="settings-btn" onclick="toggleSettings()">⚙</button>
 </header>
 
@@ -1153,28 +1153,10 @@ footer { font-size: 12px; font-weight: 500; color: #8890b8; text-align: center; 
     <div class="c-label" style="margin-bottom:12px">Sound modality</div>
     <div id="modality-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
 
-      <button class="mod-btn on" id="mod-white" onclick="setModality('white',this)">
-        <div class="mod-icon">≋</div>
-        <div class="mod-name">White noise</div>
-        <div class="mod-desc">All frequencies equally — broadband masking</div>
-      </button>
-
-      <button class="mod-btn" id="mod-pink" onclick="setModality('pink',this)">
-        <div class="mod-icon">∿</div>
-        <div class="mod-name">Pink noise</div>
-        <div class="mod-desc">Bass-boosted — more natural, less harsh</div>
-      </button>
-
-      <button class="mod-btn" id="mod-brown" onclick="setModality('brown',this)">
-        <div class="mod-icon">≈</div>
-        <div class="mod-name">Brown noise</div>
-        <div class="mod-desc">Deep rumble — relaxing, sleep-friendly</div>
-      </button>
-
-      <button class="mod-btn" id="mod-notched" onclick="setModality('notched',this)">
-        <div class="mod-icon">⌁</div>
-        <div class="mod-name">Notched noise</div>
-        <div class="mod-desc">Pink noise with your tinnitus frequency removed</div>
+      <button class="mod-btn on" id="mod-swept" onclick="setModality('swept',this)">
+        <div class="mod-icon">⇌</div>
+        <div class="mod-name">Swept tone</div>
+        <div class="mod-desc">Slowly wobbles around the target frequency</div>
       </button>
 
       <button class="mod-btn" id="mod-am" onclick="setModality('am',this)">
@@ -1183,10 +1165,28 @@ footer { font-size: 12px; font-weight: 500; color: #8890b8; text-align: center; 
         <div class="mod-desc">Sine wave pulsed at 4 Hz — easier to match</div>
       </button>
 
-      <button class="mod-btn" id="mod-swept" onclick="setModality('swept',this)">
-        <div class="mod-icon">⇌</div>
-        <div class="mod-name">Swept tone</div>
-        <div class="mod-desc">Slowly wobbles around the target frequency</div>
+      <button class="mod-btn" id="mod-notched" onclick="setModality('notched',this)">
+        <div class="mod-icon">⌁</div>
+        <div class="mod-name">Notched noise</div>
+        <div class="mod-desc">Pink noise with your tinnitus frequency removed</div>
+      </button>
+
+      <button class="mod-btn" id="mod-pink" onclick="setModality('pink',this)">
+        <div class="mod-icon">∿</div>
+        <div class="mod-name">Pink noise</div>
+        <div class="mod-desc">Bass-boosted — more natural, less harsh</div>
+      </button>
+
+      <button class="mod-btn" id="mod-white" onclick="setModality('white',this)">
+        <div class="mod-icon">≋</div>
+        <div class="mod-name">White noise</div>
+        <div class="mod-desc">All frequencies equally — broadband masking</div>
+      </button>
+
+      <button class="mod-btn" id="mod-brown" onclick="setModality('brown',this)">
+        <div class="mod-icon">≈</div>
+        <div class="mod-name">Brown noise</div>
+        <div class="mod-desc">Deep rumble — relaxing, sleep-friendly</div>
       </button>
 
     </div>
@@ -1194,7 +1194,7 @@ footer { font-size: 12px; font-weight: 500; color: #8890b8; text-align: center; 
 
   <!-- Modality description -->
   <div class="card" id="mod-info-card">
-    <div class="c-label" style="margin-bottom:6px" id="mod-info-title">White noise</div>
+    <div class="c-label" style="margin-bottom:6px" id="mod-info-title">Swept tone</div>
     <div style="font-size:13px;font-weight:500;color:#555878;line-height:1.7" id="mod-info-body">
       Plays equal energy across all frequencies. Good for general masking — covers a wide range of tinnitus types. Use for background relief during work or sleep.
     </div>
@@ -1216,6 +1216,12 @@ footer { font-size: 12px; font-weight: 500; color: #8890b8; text-align: center; 
     <div style="font-size:11px;font-weight:600;color:#8890b8;margin-bottom:10px" id="notch-mode-desc">
       Auto mode: the notch sweeps slowly across the frequency range on its own
     </div>
+    <button id="notch-hold-btn" onclick="toggleNotchHold()"
+      style="width:100%;padding:11px;margin-bottom:10px;font-size:13px;font-weight:700;
+        border-radius:10px;border:2px solid #3a5ce8;background:#e8ecff;color:#3a5ce8;
+        cursor:pointer;font-family:'DM Sans',sans-serif;touch-action:manipulation">
+      ⏸ Hold at this frequency
+    </button>
     <div class="sl-row">
       <span class="sl-lbl">100 Hz</span>
       <input type="range" id="notch-sl" min="0" max="1000" value="580" step="1"
@@ -1231,6 +1237,18 @@ footer { font-size: 12px; font-weight: 500; color: #8890b8; text-align: center; 
       </div>
       <button class="fb" style="margin-top:10px;width:100%;font-size:13px;padding:12px;box-sizing:border-box"
         onclick="useMatchFreq()">↑ Use my saved match frequency</button>
+    </div>
+    <!-- Notch sweep speed (only meaningful in auto mode) -->
+    <div id="notch-speed-wrap" style="margin-top:12px;padding-top:12px;border-top:1px solid #dde2f4">
+      <div style="font-size:11px;font-weight:700;color:#8890b8;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">
+        Sweep speed — <span id="notch-speed-label">Medium</span>
+      </div>
+      <div class="sl-row">
+        <span class="sl-lbl">Slow</span>
+        <input type="range" id="notch-speed-sl" min="1" max="10" value="4" step="1"
+          oninput="updateNotchSpeed()">
+        <span class="sl-lbl" style="text-align:right">Fast</span>
+      </div>
     </div>
   </div>
 
@@ -1277,6 +1295,12 @@ footer { font-size: 12px; font-weight: 500; color: #8890b8; text-align: center; 
     <div style="font-size:11px;font-weight:600;color:#8890b8;margin-bottom:10px" id="centre-mode-desc">
       Auto mode: the centre frequency sweeps slowly across the range on its own
     </div>
+    <button id="centre-hold-btn" onclick="toggleCentreHold()"
+      style="width:100%;padding:11px;margin-bottom:10px;font-size:13px;font-weight:700;
+        border-radius:10px;border:2px solid #3a5ce8;background:#e8ecff;color:#3a5ce8;
+        cursor:pointer;font-family:'DM Sans',sans-serif;touch-action:manipulation">
+      ⏸ Hold at this frequency
+    </button>
     <div class="sl-row">
       <span class="sl-lbl">100 Hz</span>
       <input type="range" id="centre-sl" min="0" max="1000" value="580" step="1"
@@ -2705,7 +2729,7 @@ var thPlaying    = false;
 var thCtx        = null;
 var thNodes      = [];        // all nodes created — stopped together
 var thVol        = 0.50;
-var thModality   = 'white';
+var thModality   = 'swept';
 var notchSV      = 580;       // slider value for notch centre
 var centreSV     = 580;       // slider value for AM/swept centre
 var modRate      = 4;         // Hz for AM pulse or swept wobble
@@ -2714,10 +2738,13 @@ var modRate      = 4;         // Hz for AM pulse or swept wobble
 var notchAuto    = true;      // default ON
 var centreAuto   = true;      // default ON
 var rateAuto     = true;      // default ON — auto-vary the pulse/sweep speed
+var notchHold    = false;     // Hold freezes the sweep at current freq
+var centreHold   = false;
 var thSweepTimer = null;
 var thSweepDir   = 1;         // 1 = ascending, -1 = descending
 var TH_SWEEP_STEP_SV = 4;     // slider units per tick (smooth slow sweep)
 var TH_SWEEP_MS  = 120;       // tick interval
+var notchSweepSpeed = 4;      // notch sweep speed (1=slow, 10=fast)
 var thRateTimer  = null;
 var thRateDir    = 1;         // rate sweep direction
 var TH_RATE_STEP = 0.3;       // raw slider units per tick for rate
@@ -2837,8 +2864,12 @@ function startThSweep() {
   thSweepTimer = setInterval(function() {
     if (!thPlaying) { stopThSweep(); return; }
     var isNotch = (thModality === 'notched');
+    // If held, don't advance — just keep playing the current frequency
+    if (isNotch && notchHold) return;
+    if (!isNotch && centreHold) return;
     var cur = isNotch ? notchSV : centreSV;
-    cur += thSweepDir * TH_SWEEP_STEP_SV;
+    var step = isNotch ? notchSweepSpeed : TH_SWEEP_STEP_SV;
+    cur += thSweepDir * step;
     if (cur >= 1000) { cur = 1000; thSweepDir = -1; }
     else if (cur <= 0) { cur = 0; thSweepDir = 1; }
     if (isNotch) {
@@ -2856,6 +2887,44 @@ function stopThSweep() {
   if (thSweepTimer) { clearInterval(thSweepTimer); thSweepTimer = null; }
 }
 
+function updateNotchSpeed() {
+  notchSweepSpeed = parseInt(document.getElementById('notch-speed-sl').value);
+  fillSl(document.getElementById('notch-speed-sl'), ((notchSweepSpeed-1)/9)*100);
+  var lbl = notchSweepSpeed <= 2 ? 'Slow' : notchSweepSpeed <= 5 ? 'Medium' : notchSweepSpeed <= 8 ? 'Fast' : 'Very fast';
+  var el = document.getElementById('notch-speed-label');
+  if (el) el.textContent = lbl;
+}
+
+// Hold — freeze the sweep at the current frequency, sound keeps playing.
+// Tap again to resume sweeping. Different from turning Auto off (which reveals
+// manual controls); Hold keeps auto mode but pauses the motion.
+function toggleNotchHold() {
+  notchHold = !notchHold;
+  var btn = document.getElementById('notch-hold-btn');
+  if (btn) {
+    if (notchHold) {
+      btn.innerHTML = '▶ Resume sweep · holding ' + s2f(notchSV).toLocaleString() + ' Hz';
+      btn.style.background = '#e6fff4'; btn.style.borderColor = '#0a7a55'; btn.style.color = '#0a7a55';
+    } else {
+      btn.innerHTML = '⏸ Hold at this frequency';
+      btn.style.background = '#e8ecff'; btn.style.borderColor = '#3a5ce8'; btn.style.color = '#3a5ce8';
+    }
+  }
+}
+function toggleCentreHold() {
+  centreHold = !centreHold;
+  var btn = document.getElementById('centre-hold-btn');
+  if (btn) {
+    if (centreHold) {
+      btn.innerHTML = '▶ Resume sweep · holding ' + s2f(centreSV).toLocaleString() + ' Hz';
+      btn.style.background = '#e6fff4'; btn.style.borderColor = '#0a7a55'; btn.style.color = '#0a7a55';
+    } else {
+      btn.innerHTML = '⏸ Hold at this frequency';
+      btn.style.background = '#e8ecff'; btn.style.borderColor = '#3a5ce8'; btn.style.color = '#3a5ce8';
+    }
+  }
+}
+
 // Should the current modality be auto-sweeping?
 function thAutoActive() {
   if (thModality === 'notched') return notchAuto;
@@ -2869,12 +2938,19 @@ function setNotchAuto(on) {
   var thumb = document.getElementById('notch-auto-thumb');
   var desc  = document.getElementById('notch-mode-desc');
   var man   = document.getElementById('notch-manual-controls');
+  var hold  = document.getElementById('notch-hold-btn');
   if (track) { track.style.background = on ? '#3a5ce8' : '#dde2f4'; track.style.borderColor = on ? '#3a5ce8' : '#c8cee8'; }
   if (thumb) thumb.style.left = on ? '19px' : '3px';
   if (desc)  desc.textContent = on
     ? 'Auto mode: the notch sweeps slowly across the frequency range on its own'
     : 'Manual mode: use the slider and buttons to set the notch frequency';
   if (man)   man.style.display = on ? 'none' : 'block';
+  if (hold)  hold.style.display = on ? 'block' : 'none';
+  var speedWrap = document.getElementById('notch-speed-wrap');
+  if (speedWrap) speedWrap.style.display = on ? 'block' : 'none';
+  // Reset hold when toggling auto
+  notchHold = false;
+  if (hold) { hold.innerHTML = '⏸ Hold at this frequency'; hold.style.background = '#e8ecff'; hold.style.borderColor = '#3a5ce8'; hold.style.color = '#3a5ce8'; }
   if (thPlaying && thModality === 'notched') {
     if (on) startThSweep(); else stopThSweep();
   }
@@ -2885,12 +2961,16 @@ function setCentreAuto(on) {
   var thumb = document.getElementById('centre-auto-thumb');
   var desc  = document.getElementById('centre-mode-desc');
   var man   = document.getElementById('centre-manual-controls');
+  var hold  = document.getElementById('centre-hold-btn');
   if (track) { track.style.background = on ? '#3a5ce8' : '#dde2f4'; track.style.borderColor = on ? '#3a5ce8' : '#c8cee8'; }
   if (thumb) thumb.style.left = on ? '19px' : '3px';
   if (desc)  desc.textContent = on
     ? 'Auto mode: the centre frequency sweeps slowly across the range on its own'
     : 'Manual mode: use the slider to set the centre frequency';
   if (man)   man.style.display = on ? 'none' : 'block';
+  if (hold)  hold.style.display = on ? 'block' : 'none';
+  centreHold = false;
+  if (hold) { hold.innerHTML = '⏸ Hold at this frequency'; hold.style.background = '#e8ecff'; hold.style.borderColor = '#3a5ce8'; hold.style.color = '#3a5ce8'; }
   if (thPlaying && (thModality === 'am' || thModality === 'swept')) {
     if (on) startThSweep(); else stopThSweep();
   }
@@ -3218,6 +3298,7 @@ function initTherapySliders() {
   fillSl(document.getElementById('centre-sl'), centreSV/10);
   fillSl(document.getElementById('th-vol-sl'), 50);
   fillSl(document.getElementById('mod-rate-sl'), ((8-1)/19)*100);
+  fillSl(document.getElementById('notch-speed-sl'), ((4-1)/9)*100);
   document.getElementById('notch-val').textContent  = s2f(notchSV).toLocaleString() + ' Hz';
   document.getElementById('centre-val').textContent = s2f(centreSV).toLocaleString() + ' Hz';
   // Wire auto-sweep toggles
@@ -3230,6 +3311,7 @@ function initTherapySliders() {
   setNotchAuto(notchAuto);
   setCentreAuto(centreAuto);
   setRateAuto(rateAuto);
+  updateNotchSpeed();
 }
 
 // Manual frequency text entry
@@ -3436,6 +3518,9 @@ fillSl('scan-vol-sl', 50);
 var ktfSl = document.getElementById('ktf-vol-sl');
 if (ktfSl) fillSl(ktfSl, 50);
 initTherapySliders();
+// Set initial therapy modality (swept — matches first button and Match tab order)
+var swBtn = document.getElementById('mod-swept');
+if (swBtn) setModality('swept', swBtn);
 syncBBEarInputs();
 updateUI();
 
