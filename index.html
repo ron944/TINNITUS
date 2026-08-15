@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Tinnitus Pro v2.8.1">
+<meta name="apple-mobile-web-app-title" content="Tinnitus Pro v2.8.2">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#eef1fb">
 <!-- Prevent iOS Safari zoom on input focus (inputs < 16px trigger zoom) -->
@@ -17,7 +17,7 @@
   #freq-manual { font-size: 32px !important; touch-action: manipulation; }
   input[type="range"] { touch-action: pan-x; -webkit-appearance: none; }
 </style>
-<title>Tinnitus Pro v2.8.1</title>
+<title>Tinnitus Pro v2.8.2</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
@@ -438,7 +438,7 @@ footer { font-size: 12px; font-weight: 500; color: #8890b8; text-align: center; 
 </div>
 
 <header>
-  <div class="logo">Tinnitus <span>Pro</span> <span style="font-size:11px;font-weight:600;color:#8890b8;letter-spacing:.05em">v2.8.1</span></div>
+  <div class="logo">Tinnitus <span>Pro</span> <span style="font-size:11px;font-weight:600;color:#8890b8;letter-spacing:.05em">v2.8.2</span></div>
   <button id="settings-btn" onclick="toggleSettings()">⚙</button>
 </header>
 
@@ -1238,17 +1238,19 @@ footer { font-size: 12px; font-weight: 500; color: #8890b8; text-align: center; 
       <button class="fb" style="margin-top:10px;width:100%;font-size:13px;padding:12px;box-sizing:border-box"
         onclick="useMatchFreq()">↑ Use my saved match frequency</button>
     </div>
-    <!-- Notch sweep speed (only meaningful in auto mode) -->
-    <div id="notch-speed-wrap" style="margin-top:12px;padding-top:12px;border-top:1px solid #dde2f4">
-      <div style="font-size:11px;font-weight:700;color:#8890b8;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">
-        Sweep speed — <span id="notch-speed-label">Medium</span>
-      </div>
-      <div class="sl-row">
-        <span class="sl-lbl">Slow</span>
-        <input type="range" id="notch-speed-sl" min="1" max="10" value="4" step="1"
-          oninput="updateNotchSpeed()">
-        <span class="sl-lbl" style="text-align:right">Fast</span>
-      </div>
+  </div>
+
+  <!-- Notch sweep speed — separate card (matches Pulse rate card format) -->
+  <div class="card" id="notch-speed-card" style="display:none">
+    <div class="c-label" style="margin-bottom:10px">Notch sweep speed — <span id="notch-speed-label">Medium</span></div>
+    <div class="sl-row">
+      <span class="sl-lbl">Slow</span>
+      <input type="range" id="notch-speed-sl" min="1" max="10" value="4" step="1"
+        oninput="updateNotchSpeed()">
+      <span class="sl-lbl" style="text-align:right">Fast</span>
+    </div>
+    <div style="font-size:11px;font-weight:600;color:#8890b8;margin-top:4px">
+      How fast the notch moves across the frequency range in auto mode
     </div>
   </div>
 
@@ -2792,6 +2794,7 @@ function setModality(m, btn) {
   var isAM      = (m === 'am');
   var isSwept   = (m === 'swept');
   document.getElementById('notch-freq-card').style.display  = isNotched ? 'block' : 'none';
+  document.getElementById('notch-speed-card').style.display = isNotched ? 'block' : 'none';
   document.getElementById('mod-rate-card').style.display    = (isAM || isSwept) ? 'block' : 'none';
   document.getElementById('mod-centre-card').style.display  = (isAM || isSwept) ? 'block' : 'none';
   if (isAM)    { document.getElementById('mod-rate-label').textContent = 'Pulse rate'; }
@@ -2946,8 +2949,9 @@ function setNotchAuto(on) {
     : 'Manual mode: use the slider and buttons to set the notch frequency';
   if (man)   man.style.display = on ? 'none' : 'block';
   if (hold)  hold.style.display = on ? 'block' : 'none';
-  var speedWrap = document.getElementById('notch-speed-wrap');
-  if (speedWrap) speedWrap.style.display = on ? 'block' : 'none';
+  // Sweep speed card only relevant in auto mode
+  var speedCard = document.getElementById('notch-speed-card');
+  if (speedCard && thModality === 'notched') speedCard.style.display = on ? 'block' : 'none';
   // Reset hold when toggling auto
   notchHold = false;
   if (hold) { hold.innerHTML = '⏸ Hold at this frequency'; hold.style.background = '#e8ecff'; hold.style.borderColor = '#3a5ce8'; hold.style.color = '#3a5ce8'; }
