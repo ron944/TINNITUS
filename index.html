@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Tinnitus Pro v2.6.5">
+<meta name="apple-mobile-web-app-title" content="Tinnitus Pro v2.6.7">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#eef1fb">
 <!-- Prevent iOS Safari zoom on input focus (inputs < 16px trigger zoom) -->
@@ -17,7 +17,7 @@
   #freq-manual { font-size: 32px !important; touch-action: manipulation; }
   input[type="range"] { touch-action: pan-x; -webkit-appearance: none; }
 </style>
-<title>Tinnitus Pro v2.6.5</title>
+<title>Tinnitus Pro v2.6.7</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
@@ -130,6 +130,7 @@ header {
 
 /* Sliders */
 .sl-row { display: flex; align-items: center; gap: 12px; }
+.sl-row input[type="range"] { flex: 1; min-width: 0; }
 .sl-lbl { font-size: 12px; font-weight: 600; color: #8890b8; min-width: 44px; }
 .sl-val { font-family: 'DM Mono', monospace; font-size: 12px; font-weight: 500; color: #3a4070; min-width: 42px; text-align: right; }
 input[type=range] {
@@ -437,7 +438,7 @@ footer { font-size: 12px; font-weight: 500; color: #8890b8; text-align: center; 
 </div>
 
 <header>
-  <div class="logo">Tinnitus <span>Pro</span> <span style="font-size:11px;font-weight:600;color:#8890b8;letter-spacing:.05em">v2.6.5</span></div>
+  <div class="logo">Tinnitus <span>Pro</span> <span style="font-size:11px;font-weight:600;color:#8890b8;letter-spacing:.05em">v2.6.7</span></div>
   <button id="settings-btn" onclick="toggleSettings()">⚙</button>
 </header>
 
@@ -1211,13 +1212,13 @@ footer { font-size: 12px; font-weight: 500; color: #8890b8; text-align: center; 
         oninput="updateNotchFreq()">
       <span class="sl-val" id="notch-val">6,000 Hz</span>
     </div>
-    <div style="display:flex;gap:8px;margin-top:8px">
-      <button class="fb" style="font-size:12px;padding:9px 0" onclick="notchNudge(-10)">«</button>
-      <button class="fb" style="font-size:12px;padding:9px 0" onclick="notchNudge(-1)">‹</button>
-      <button class="fb" style="font-size:12px;padding:9px 0" onclick="notchNudge(1)">›</button>
-      <button class="fb" style="font-size:12px;padding:9px 0" onclick="notchNudge(10)">»</button>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px;margin-top:10px;width:100%">
+      <button class="fb" style="font-size:13px;padding:9px 0" onclick="notchNudge(-10)">«</button>
+      <button class="fb" style="font-size:13px;padding:9px 0" onclick="notchNudge(-1)">‹</button>
+      <button class="fb" style="font-size:13px;padding:9px 0" onclick="notchNudge(1)">›</button>
+      <button class="fb" style="font-size:13px;padding:9px 0" onclick="notchNudge(10)">»</button>
     </div>
-    <button class="fb" style="margin-top:8px;width:100%;font-size:12px;padding:10px"
+    <button class="fb" style="margin-top:10px;width:100%;font-size:13px;padding:12px;box-sizing:border-box"
       onclick="useMatchFreq()">↑ Use my saved match frequency</button>
   </div>
 
@@ -1253,10 +1254,10 @@ footer { font-size: 12px; font-weight: 500; color: #8890b8; text-align: center; 
     <div class="c-label">Volume</div>
     <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px">
       <span class="sl-lbl">Quiet</span>
-      <input type="range" id="th-vol-sl" min="1" max="100" value="35" step="1"
+      <input type="range" id="th-vol-sl" min="1" max="100" value="50" step="1"
         style="flex:1;height:14px;border-radius:7px"
         oninput="updateTherapyVol()">
-      <span class="sl-val" id="th-vol-val">35%</span>
+      <span class="sl-val" id="th-vol-val">50%</span>
     </div>
     <div style="display:flex;gap:6px">
       <button class="fb" onclick="adjustThVol(-5)" style="font-size:13px;padding:10px 0">− 5%</button>
@@ -2196,6 +2197,7 @@ function syncKTFVol(val) {
   val = Math.max(0, Math.min(100, parseInt(val)));
   scanVol = val / 100;
   vol = scanVol; // keep vol in sync — calcGain now uses scanVol exclusively but keep consistent
+  thVol = scanVol; // keep therapy volume in sync too
   // Sync scan vol slider
   var svsl = document.getElementById('scan-vol-sl');
   if (svsl) { svsl.value = val; fillSl(svsl, val); }
@@ -2206,8 +2208,16 @@ function syncKTFVol(val) {
   if (ksl) { ksl.value = val; fillSl(ksl, val); }
   var kval = document.getElementById('ktf-vol-val');
   if (kval) kval.textContent = val + '%';
+  // Sync Therapy slider
+  var tsl = document.getElementById('th-vol-sl');
+  if (tsl) { tsl.value = val; fillSl(tsl, val); }
+  var tval = document.getElementById('th-vol-val');
+  if (tval) tval.textContent = val + '%';
   // Live update if audio is playing
   if (gainNode && ctx) gainNode.gain.setTargetAtTime(calcGain(), ctx.currentTime, 0.05);
+  if (thCtx) {
+    thNodes.forEach(function(n){ if (n.gain) n.gain.setTargetAtTime(thVol*0.4, thCtx.currentTime, 0.05); });
+  }
 }
 
 function setFreqPreset(id) {
@@ -2654,7 +2664,7 @@ function updateScanTag() {
 var thPlaying    = false;
 var thCtx        = null;
 var thNodes      = [];        // all nodes created — stopped together
-var thVol        = 0.35;
+var thVol        = 0.50;
 var thModality   = 'white';
 var notchSV      = 580;       // slider value for notch centre
 var centreSV     = 580;       // slider value for AM/swept centre
@@ -2755,19 +2765,32 @@ function updateModRate() {
 }
 
 function updateTherapyVol() {
-  thVol = parseInt(document.getElementById('th-vol-sl').value) / 100;
-  document.getElementById('th-vol-val').textContent = Math.round(thVol*100) + '%';
-  fillSl(document.getElementById('th-vol-sl'), thVol*100);
-  // Live update gain nodes
-  thNodes.forEach(function(n){ if (n.gain) n.gain.setTargetAtTime(thVol*0.4, thCtx.currentTime, 0.05); });
+  var v = parseInt(document.getElementById('th-vol-sl').value);
+  thVol = v / 100;
+  // Sync with the shared master volume (same as Match tab)
+  scanVol = thVol;
+  vol = thVol;
+  document.getElementById('th-vol-val').textContent = v + '%';
+  fillSl(document.getElementById('th-vol-sl'), v);
+  // Sync the other volume sliders so all tabs match
+  var svsl = document.getElementById('scan-vol-sl');
+  if (svsl) { svsl.value = v; fillSl(svsl, v); }
+  var svval = document.getElementById('scan-vol-val');
+  if (svval) svval.textContent = v + '%';
+  var ksl = document.getElementById('ktf-vol-sl');
+  if (ksl) { ksl.value = v; fillSl(ksl, v); }
+  var kval = document.getElementById('ktf-vol-val');
+  if (kval) kval.textContent = v + '%';
+  // Live update therapy gain nodes if playing
+  if (thCtx) {
+    thNodes.forEach(function(n){ if (n.gain) n.gain.setTargetAtTime(thVol*0.4, thCtx.currentTime, 0.05); });
+  }
 }
 function adjustThVol(d) {
   var el = document.getElementById('th-vol-sl');
   var v = Math.max(1, Math.min(100, parseInt(el.value)+d));
-  el.value = v; thVol = v/100;
-  document.getElementById('th-vol-val').textContent = v+'%';
-  fillSl(el, v);
-  thNodes.forEach(function(n){ if (n.gain) n.gain.setTargetAtTime(thVol*0.4, thCtx.currentTime, 0.05); });
+  el.value = v;
+  updateTherapyVol();
 }
 
 // ── White/Pink/Brown noise generator ────────────────────────────
@@ -2997,7 +3020,7 @@ function toggleTherapy() {
 function initTherapySliders() {
   fillSl(document.getElementById('notch-sl'), notchSV/10);
   fillSl(document.getElementById('centre-sl'), centreSV/10);
-  fillSl(document.getElementById('th-vol-sl'), 35);
+  fillSl(document.getElementById('th-vol-sl'), 50);
   fillSl(document.getElementById('mod-rate-sl'), ((8-1)/19)*100);
   document.getElementById('notch-val').textContent  = s2f(notchSV).toLocaleString() + ' Hz';
   document.getElementById('centre-val').textContent = s2f(centreSV).toLocaleString() + ' Hz';
