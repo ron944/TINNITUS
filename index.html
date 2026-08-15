@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Tinnitus Pro v2.8.2">
+<meta name="apple-mobile-web-app-title" content="Tinnitus Pro v2.8.3">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#eef1fb">
 <!-- Prevent iOS Safari zoom on input focus (inputs < 16px trigger zoom) -->
@@ -17,7 +17,7 @@
   #freq-manual { font-size: 32px !important; touch-action: manipulation; }
   input[type="range"] { touch-action: pan-x; -webkit-appearance: none; }
 </style>
-<title>Tinnitus Pro v2.8.2</title>
+<title>Tinnitus Pro v2.8.3</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
@@ -438,7 +438,7 @@ footer { font-size: 12px; font-weight: 500; color: #8890b8; text-align: center; 
 </div>
 
 <header>
-  <div class="logo">Tinnitus <span>Pro</span> <span style="font-size:11px;font-weight:600;color:#8890b8;letter-spacing:.05em">v2.8.2</span></div>
+  <div class="logo">Tinnitus <span>Pro</span> <span style="font-size:11px;font-weight:600;color:#8890b8;letter-spacing:.05em">v2.8.3</span></div>
   <button id="settings-btn" onclick="toggleSettings()">⚙</button>
 </header>
 
@@ -1201,9 +1201,23 @@ footer { font-size: 12px; font-weight: 500; color: #8890b8; text-align: center; 
   </div>
 
   <!-- Notched frequency (shown only for notched noise) -->
+  <!-- Notch Sweep Speed — separate card (matches Pulse rate card format) -->
+  <div class="card" id="notch-speed-card" style="display:none">
+    <div class="c-label" style="margin-bottom:10px">Notch Sweep Speed — <span id="notch-speed-label">Medium</span></div>
+    <div class="sl-row">
+      <span class="sl-lbl">Slow</span>
+      <input type="range" id="notch-speed-sl" min="1" max="10" value="4" step="1"
+        oninput="updateNotchSpeed()">
+      <span class="sl-lbl" style="text-align:right">Fast</span>
+    </div>
+    <div style="font-size:11px;font-weight:600;color:#8890b8;margin-top:4px">
+      How fast the notch moves across the frequency range in auto mode
+    </div>
+  </div>
+
   <div class="card" id="notch-freq-card" style="display:none">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-      <div class="c-label" style="margin-bottom:0">Notch centre frequency</div>
+      <div class="c-label" style="margin-bottom:0">Notch Centre Frequency</div>
       <div style="display:flex;align-items:center;gap:8px">
         <span style="font-size:11px;font-weight:700;color:#8890b8">Auto Frequency</span>
         <label style="position:relative;width:40px;height:24px;flex-shrink:0">
@@ -1240,20 +1254,6 @@ footer { font-size: 12px; font-weight: 500; color: #8890b8; text-align: center; 
     </div>
   </div>
 
-  <!-- Notch sweep speed — separate card (matches Pulse rate card format) -->
-  <div class="card" id="notch-speed-card" style="display:none">
-    <div class="c-label" style="margin-bottom:10px">Notch sweep speed — <span id="notch-speed-label">Medium</span></div>
-    <div class="sl-row">
-      <span class="sl-lbl">Slow</span>
-      <input type="range" id="notch-speed-sl" min="1" max="10" value="4" step="1"
-        oninput="updateNotchSpeed()">
-      <span class="sl-lbl" style="text-align:right">Fast</span>
-    </div>
-    <div style="font-size:11px;font-weight:600;color:#8890b8;margin-top:4px">
-      How fast the notch moves across the frequency range in auto mode
-    </div>
-  </div>
-
   <!-- AM / Swept controls -->
   <div class="card" id="mod-rate-card" style="display:none">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
@@ -1284,7 +1284,7 @@ footer { font-size: 12px; font-weight: 500; color: #8890b8; text-align: center; 
   <!-- Centre frequency for AM/Swept -->
   <div class="card" id="mod-centre-card" style="display:none">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-      <div class="c-label" style="margin-bottom:0">Centre frequency</div>
+      <div class="c-label" id="mod-centre-label" style="margin-bottom:0">Centre frequency</div>
       <div style="display:flex;align-items:center;gap:8px">
         <span style="font-size:11px;font-weight:700;color:#8890b8">Auto Frequency</span>
         <label style="position:relative;width:40px;height:24px;flex-shrink:0">
@@ -2797,8 +2797,14 @@ function setModality(m, btn) {
   document.getElementById('notch-speed-card').style.display = isNotched ? 'block' : 'none';
   document.getElementById('mod-rate-card').style.display    = (isAM || isSwept) ? 'block' : 'none';
   document.getElementById('mod-centre-card').style.display  = (isAM || isSwept) ? 'block' : 'none';
-  if (isAM)    { document.getElementById('mod-rate-label').textContent = 'Pulse rate'; }
-  if (isSwept) { document.getElementById('mod-rate-label').textContent = 'Sweep speed'; }
+  if (isAM) {
+    document.getElementById('mod-rate-label').textContent   = 'Pulse Rate';
+    document.getElementById('mod-centre-label').textContent = 'Pulse Centre Frequency';
+  }
+  if (isSwept) {
+    document.getElementById('mod-rate-label').textContent   = 'Sweep Speed';
+    document.getElementById('mod-centre-label').textContent = 'Sweep Centre Frequency';
+  }
 
   // Restart if already playing
   if (thPlaying) { startTherapy(); }
