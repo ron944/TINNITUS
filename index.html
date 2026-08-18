@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Tinnitus Pro v2.9.1">
+<meta name="apple-mobile-web-app-title" content="Tinnitus Pro v2.9.2">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#eef1fb">
 <!-- Prevent iOS Safari zoom on input focus (inputs < 16px trigger zoom) -->
@@ -17,7 +17,7 @@
   #freq-manual { font-size: 32px !important; touch-action: manipulation; }
   input[type="range"] { touch-action: pan-x; -webkit-appearance: none; }
 </style>
-<title>Tinnitus Pro v2.9.1</title>
+<title>Tinnitus Pro v2.9.2</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
@@ -446,7 +446,7 @@ footer { font-size: 12px; font-weight: 500; color: #8890b8; text-align: center; 
 </div>
 
 <header>
-  <div class="logo">Tinnitus <span>Pro</span> <span style="font-size:11px;font-weight:600;color:#8890b8;letter-spacing:.05em">v2.9.1</span></div>
+  <div class="logo">Tinnitus <span>Pro</span> <span style="font-size:11px;font-weight:600;color:#8890b8;letter-spacing:.05em">v2.9.2</span></div>
   <button id="settings-btn" onclick="toggleSettings()">⚙</button>
 </header>
 
@@ -914,7 +914,31 @@ footer { font-size: 12px; font-weight: 500; color: #8890b8; text-align: center; 
     <div style="margin-top:12px;padding:14px;background:#f8f9ff;border-radius:12px;border-left:4px solid #8890b8">
       <div style="font-size:12px;font-weight:800;color:#8890b8;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Therapy Tab</div>
       <div style="font-size:13px;font-weight:500;color:#555878;line-height:1.8">
-        Once you know your frequency, the Therapy tab provides longer-session therapeutic sounds — white, pink and brown noise, notched noise (removes your tinnitus frequency to help the brain recalibrate), binaural beats, pulsed tones, and more.
+        Once you know your frequency, the Therapy tab provides longer-session therapeutic sounds. Pick one modality at a time:<br><br>
+        <strong>Swept tone</strong> — a tone that wobbles around a centre frequency.<br>
+        <strong>Pulsed tone</strong> — a tone that pulses on and off at a set rate.<br>
+        <strong>Notched noise</strong> — pink noise with your tinnitus frequency removed, based on Notched Sound Therapy.<br>
+        <strong>Pink / White / Brown noise</strong> — broadband masking sounds for general relief and sleep.<br><br>
+        Tap a sound to select it, then press <strong>Start</strong>. Only one sound plays at a time — choosing another switches to it.
+      </div>
+    </div>
+
+    <!-- Auto Frequency / Dwell / Hold -->
+    <div style="margin-top:12px;padding:14px;background:#f8f9ff;border-radius:12px;border-left:4px solid #3a5ce8">
+      <div style="font-size:12px;font-weight:800;color:#3a5ce8;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Auto Frequency, Dwell &amp; Hold</div>
+      <div style="font-size:13px;font-weight:500;color:#555878;line-height:1.8">
+        The swept, pulsed and notched sounds can move their frequency automatically:<br><br>
+        <strong>Auto Frequency</strong> (toggle) — when on, the frequency steps across the range on its own. Turn it off to set the frequency yourself with the slider.<br>
+        <strong>Dwell Time</strong> (1s–8s buttons) — how long each frequency is held before stepping to the next, exactly like the dwell time in the Match tab.<br>
+        <strong>Hold</strong> — while auto-stepping, tap Hold to freeze on the current frequency and listen as long as you like. Tap again to resume stepping.
+      </div>
+    </div>
+
+    <!-- Known Tinnitus Frequencies -->
+    <div style="margin-top:12px;padding:14px;background:#f8f9ff;border-radius:12px;border-left:4px solid #8890b8">
+      <div style="font-size:12px;font-weight:800;color:#8890b8;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Known Tinnitus Frequencies</div>
+      <div style="font-size:13px;font-weight:500;color:#555878;line-height:1.8">
+        At the bottom of the Therapy tab, this card lets you quickly explore the frequencies where tinnitus most commonly sits. <strong>Scan range presets</strong> start a scan over a range — tap again to stop. <strong>Jump to a frequency</strong> plays a single tone — tap again to stop. These are separate from the therapy sounds above, so starting one stops the other.
       </div>
     </div>
   </div>
