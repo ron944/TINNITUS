@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Tinnitus Pro v2.9">
+<meta name="apple-mobile-web-app-title" content="Tinnitus Pro v2.9.1">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#eef1fb">
 <!-- Prevent iOS Safari zoom on input focus (inputs < 16px trigger zoom) -->
@@ -17,7 +17,7 @@
   #freq-manual { font-size: 32px !important; touch-action: manipulation; }
   input[type="range"] { touch-action: pan-x; -webkit-appearance: none; }
 </style>
-<title>Tinnitus Pro v2.9</title>
+<title>Tinnitus Pro v2.9.1</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
@@ -446,7 +446,7 @@ footer { font-size: 12px; font-weight: 500; color: #8890b8; text-align: center; 
 </div>
 
 <header>
-  <div class="logo">Tinnitus <span>Pro</span> <span style="font-size:11px;font-weight:600;color:#8890b8;letter-spacing:.05em">v2.9</span></div>
+  <div class="logo">Tinnitus <span>Pro</span> <span style="font-size:11px;font-weight:600;color:#8890b8;letter-spacing:.05em">v2.9.1</span></div>
   <button id="settings-btn" onclick="toggleSettings()">⚙</button>
 </header>
 
@@ -1361,7 +1361,7 @@ footer { font-size: 12px; font-weight: 500; color: #8890b8; text-align: center; 
       <span style="font-size:10px;font-weight:600;color:#8890b8;font-style:italic">Evidence-based</span>
     </div>
     <div style="font-size:11px;font-weight:500;color:#8890b8;margin-bottom:12px;line-height:1.5">
-      Presets set the scan range and start scanning. Jump to a specific frequency and hear it immediately.
+      Presets set the scan range and start scanning — tap again to stop. Jump to a specific frequency to hear it — tap again to stop. These are separate from the therapy sounds above; starting one stops the other.
     </div>
 
     <div class="c-label" style="margin-bottom:6px">Volume <span style="font-size:10px;font-weight:500;color:#b0b8d8">(shared with Auto Scan)</span></div>
@@ -1878,8 +1878,16 @@ function showTab(id, btn) {
   // Stop therapy if leaving therapy tab
   if (thPlaying && id !== 'therapy') {
     stopTherapy(); thPlaying = false;
-    document.getElementById('th-play-lbl').textContent = 'Start';
-    document.getElementById('th-play-btn').classList.remove('on');
+    updateTherapyPlayBtn();
+  }
+  // Stop any Known-Frequencies scan/jump tone when leaving therapy tab
+  // (these live in the Therapy tab but use the Match engine)
+  if (id !== 'therapy' && id !== 'match') {
+    if (document.querySelector('.freq-preset-btn.on') || document.querySelector('.freq-marker-btn.on')) {
+      if (scanActive || scanPaused) stopScan();
+      if (playing) { stopAudio(); playing = false; updatePlayBtn(); }
+      document.querySelectorAll('.freq-preset-btn, .freq-marker-btn').forEach(function(b){ b.classList.remove('on'); });
+    }
   }
   document.querySelectorAll('.panel').forEach(function(p){ p.classList.remove('on'); });
   document.querySelectorAll('.tab').forEach(function(b){ b.classList.remove('on'); });
@@ -2300,16 +2308,26 @@ function syncKTFVol(val) {
 function setFreqPreset(id) {
   var p = FREQ_PRESETS[id];
   if (!p) return;
-  // Stop everything cleanly first
+  var el = document.getElementById(id);
+  // Toggle: if this preset is already active and scanning, tapping again stops it
+  if (el && el.classList.contains('on') && (scanActive || scanPaused)) {
+    stopScan();
+    el.classList.remove('on');
+    return;
+  }
+  // Stop the therapy modality if it's playing — only one sound source at a time
+  if (thPlaying) { stopTherapy(); thPlaying = false; updateTherapyPlayBtn(); }
+  // Stop any existing scan/tone cleanly first
   if (scanActive || scanPaused) stopScan();
   if (playing) { stopAudio(); playing = false; updatePlayBtn(); }
+  // Clear jump-to-freq highlights (mutually exclusive with presets)
+  document.querySelectorAll('.freq-marker-btn').forEach(function(b){ b.classList.remove('on'); });
   // Apply range
   scanFromSV = p.from; scanToSV = p.to;
   document.getElementById('scan-from').value = p.from;
   document.getElementById('scan-to').value   = p.to;
   updateScanRange();
   document.querySelectorAll('.freq-preset-btn').forEach(function(b){ b.classList.remove('on'); });
-  var el = document.getElementById(id);
   if (el) el.classList.add('on');
   // Auto-start the scan at this range
   startScan(false);
@@ -2318,9 +2336,21 @@ function setFreqPreset(id) {
 function jumpToFreq(id) {
   var freq = FREQ_MARKERS[id];
   if (!freq) return;
-  // Stop everything cleanly first
+  var el = document.getElementById(id);
+  // Toggle: if this marker is already active and playing, tapping again stops it
+  if (el && el.classList.contains('on') && playing) {
+    stopAudio(); playing = false;
+    el.classList.remove('on');
+    updatePlayBtn();
+    return;
+  }
+  // Stop the therapy modality if it's playing — only one sound source at a time
+  if (thPlaying) { stopTherapy(); thPlaying = false; updateTherapyPlayBtn(); }
+  // Stop any existing scan/tone cleanly first
   if (scanActive || scanPaused) stopScan();
   if (playing) { stopAudio(); playing = false; }
+  // Clear preset highlights (mutually exclusive with jump-to-freq)
+  document.querySelectorAll('.freq-preset-btn').forEach(function(b){ b.classList.remove('on'); });
   // Set frequency
   sv = Math.max(0, Math.min(1000, f2s(freq)));
   document.getElementById('freq-sl').value = sv;
@@ -2328,7 +2358,6 @@ function jumpToFreq(id) {
   if (fm) fm.value = freq;
   updateUI();
   document.querySelectorAll('.freq-marker-btn').forEach(function(b){ b.classList.remove('on'); });
-  var el = document.getElementById(id);
   if (el) el.classList.add('on');
   // Start fresh audio — uses scanVol via calcGain
   startAudio(); playing = true;
@@ -3281,15 +3310,24 @@ function startTherapy() {
   if (thAutoActive()) startThSweep();
 }
 
+function updateTherapyPlayBtn() {
+  var lbl = document.getElementById('th-play-lbl');
+  var btn = document.getElementById('th-play-btn');
+  if (lbl) lbl.textContent = thPlaying ? 'Stop' : 'Start';
+  if (btn) { thPlaying ? btn.classList.add('on') : btn.classList.remove('on'); }
+}
+
 function toggleTherapy() {
   if (!thPlaying) {
+    // Stop any Known-Frequencies scan or jump tone first — one sound source at a time
+    if (scanActive || scanPaused) stopScan();
+    if (playing) { stopAudio(); playing = false; updatePlayBtn(); }
+    document.querySelectorAll('.freq-preset-btn, .freq-marker-btn').forEach(function(b){ b.classList.remove('on'); });
     startTherapy(); thPlaying = true;
-    document.getElementById('th-play-lbl').textContent = 'Stop';
-    document.getElementById('th-play-btn').classList.add('on');
+    updateTherapyPlayBtn();
   } else {
     stopTherapy(); thPlaying = false;
-    document.getElementById('th-play-lbl').textContent = 'Start';
-    document.getElementById('th-play-btn').classList.remove('on');
+    updateTherapyPlayBtn();
   }
 }
 
